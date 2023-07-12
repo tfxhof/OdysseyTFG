@@ -19,9 +19,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+plugins {
+    id "org.sonarqube" version "4.2.1.3168"
+}
 apply plugin: 'com.android.application'
-
+sonar {
+    properties {
+        property "sonar.projectKey", "OcreXx_OdysseyTFG"
+        property "sonar.organization", "odysseytfg"
+        property "sonar.host", "https://sonarcloud.io"
+    }
+}
 def getGitCommitHash = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
