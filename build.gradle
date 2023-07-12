@@ -34,7 +34,16 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
+plugins {
+    id "org.sonarqube" version "4.2.1.3168"
+}
+sonar {
+    properties {
+        property "sonar.projectKey", "OcreXx_OdysseyTFG"
+        property "sonar.organization", "odysseytfg"
+        property "sonar.host", "https://sonarcloud.io"
+    }
+}
 allprojects {
     repositories {
         google()
