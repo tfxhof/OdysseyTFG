@@ -22,7 +22,11 @@
 
 <resources>
     <string name="app_name" translatable="false">Odyssey</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Artists</string>
+    <string name="menu_album">Albums</string>
+    <string name="menu_playlist">My Playlists</string>
+    <string name="menu_songs">My songs</string>
     <!-- permission request -->
     <string name="permission_request_snackbar_button" translatable="false">@android:string/ok</string>
     <string name="permission_request_snackbar_explanation">Storage Permission is needed to load music files.</string>
