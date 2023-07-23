@@ -23,9 +23,9 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
-        android:startColor="#FF3366"
-        android:endColor="#FF6633"
+        android:startColor="#90003366"
+        android:endColor="#9066ccff"
         android:angle="45"
     />
-    <corners android:radius="30dp" />
+    <corners android:radius="40dp" />
 </shape>

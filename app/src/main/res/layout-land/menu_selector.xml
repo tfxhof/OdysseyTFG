@@ -26,8 +26,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#212121">
-
+    android:background="@color/cardview_dark_background">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_inner" />
     <Button
         android:id="@+id/button_artists"
         android:layout_width="0dp"
