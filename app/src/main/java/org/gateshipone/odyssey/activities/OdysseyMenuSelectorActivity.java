@@ -48,25 +48,31 @@ public class OdysseyMenuSelectorActivity extends AppCompatActivity {
         bArtists.setOnClickListener(v -> {
             String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ARTISTS);
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-            finish();
+
         });
 
         bAlbums.setOnClickListener(v -> {
             String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ALBUMS);
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-            finish();
+
         });
 
         bPlaylists.setOnClickListener(v -> {
             String str = "Playlists";
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-            finish();
+
         });
 
         bMyMusic.setOnClickListener(v -> {
             String str = String.valueOf(MyMusicFragment.DEFAULTTAB.TRACKS);
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-            finish();
+
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
     }
 }
