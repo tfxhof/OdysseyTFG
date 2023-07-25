@@ -40,7 +40,9 @@
         <activity
             android:name=".activities.OdysseyMainActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.App.Starting"
+            android:readPermission="com.example.app.READ_PERMISSION"
+            android:writePermission="com.example.app.WRITE_PERMISSION">
             <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
 

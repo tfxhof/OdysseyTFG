@@ -26,14 +26,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.fragments.MyMusicFragment;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
 
 public class OdysseyMenuSelectorActivity extends AppCompatActivity {
 
@@ -48,41 +45,28 @@ public class OdysseyMenuSelectorActivity extends AppCompatActivity {
         Button bPlaylists = findViewById(R.id.button_playlists);
         Button bMyMusic = findViewById(R.id.button_songs);
 
-        bArtists.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ARTISTS);
-                startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-                finish();
-            }
+        bArtists.setOnClickListener(v -> {
+            String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ARTISTS);
+            startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
+            finish();
         });
 
-        bAlbums.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ALBUMS);
-                startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-                finish();
-            }
+        bAlbums.setOnClickListener(v -> {
+            String str = String.valueOf(MyMusicFragment.DEFAULTTAB.ALBUMS);
+            startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
+            finish();
         });
 
-        bPlaylists.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //viewModel.onButtonPalylistsClick();
-                String str = "Playlists";
-                startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-                finish();
-            }
+        bPlaylists.setOnClickListener(v -> {
+            String str = "Playlists";
+            startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
+            finish();
         });
 
-        bMyMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str = String.valueOf(MyMusicFragment.DEFAULTTAB.TRACKS);
-                startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
-                finish();
-            }
+        bMyMusic.setOnClickListener(v -> {
+            String str = String.valueOf(MyMusicFragment.DEFAULTTAB.TRACKS);
+            startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
+            finish();
         });
     }
 }
