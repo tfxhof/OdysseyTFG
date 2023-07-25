@@ -24,7 +24,11 @@
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Uprawnienia Pamięci są wymagane, aby załadować pliki.</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Artyści</string>
+    <string name="menu_album">Albumy</string>
+    <string name="menu_playlist">Moje listy</string>
+    <string name="menu_songs">Moje piosenki</string>
     <!-- nav drawer -->
     <string name="navigation_drawer_open">Otwórz panel</string>
     <string name="navigation_drawer_close">Zamknij panel</string>

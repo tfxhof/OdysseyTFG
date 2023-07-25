@@ -21,6 +21,12 @@
   -->
 
 <resources>
+    <!-- menu selector  -->
+    <string name="menu_artists">Künstler</string>
+    <string name="menu_album">Alben</string>
+    <string name="menu_playlist">Meine Playlists</string>
+    <string name="menu_songs">Meine Lieder</string>
+
     <string name="context_menu_action_deleteplaylist">Playlist löschen</string>
     <string name="context_menu_action_enqueue">Zur Wiedergabeliste hinzufügen</string>
     <string name="context_menu_action_enqueueasnext">Nach aktuellem Song spielen</string>

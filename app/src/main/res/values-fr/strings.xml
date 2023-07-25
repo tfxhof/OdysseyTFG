@@ -24,7 +24,11 @@
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Autorisation \"Stockage\" nécessaire pour pouvoir charger les fichiers de musique</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Artistes</string>
+    <string name="menu_album">Albums</string>
+    <string name="menu_playlist">Mes Playlists</string>
+    <string name="menu_songs">Mes chansons</string>
     <!-- nav drawer -->
     <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
     <string name="navigation_drawer_close">Fermer le tiroir de navigation</string>

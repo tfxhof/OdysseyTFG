@@ -23,7 +23,11 @@
 <resources>
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Právo přístupu k úložišti je nutné k načtení hudebních souborů.</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Umělci</string>
+    <string name="menu_album">Alba</string>
+    <string name="menu_playlist">Moje seznamy</string>
+    <string name="menu_songs">Moje skladby</string>
     <!-- nav drawer -->
     <string name="navigation_drawer_open">Otevřít navigační zásuvku</string>
     <string name="navigation_drawer_close">Zavřít navigační zásuvku</string>

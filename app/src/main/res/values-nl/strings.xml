@@ -24,7 +24,11 @@
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Toegang to opslag is nodig om muziek bestanden te laden.</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Művészek</string>
+    <string name="menu_album">Albumok</string>
+    <string name="menu_playlist">Saját lejátszási</string>
+    <string name="menu_songs">Saját dalok</string>
     <!-- nav drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
