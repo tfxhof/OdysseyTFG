@@ -258,11 +258,12 @@ public class OdysseyMainActivity extends GenericActivity
         } else {
             String str = getIntent().getStringExtra("tab");
             Fragment fragment;
-            if (str.equals("Playlists")) {
-                fragment = SavedPlaylistsFragment.newInstance();
-            }else {
+            //if (str.equals("Playlists")) {
+                //fragment = SavedPlaylistsFragment.newInstance();
+
+            //}else {
                 fragment = MyMusicFragment.newInstance(MyMusicFragment.DEFAULTTAB.valueOf(str));
-            }
+            //}
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);

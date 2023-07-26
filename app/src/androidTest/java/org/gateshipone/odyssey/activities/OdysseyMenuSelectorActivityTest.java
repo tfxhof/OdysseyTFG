@@ -137,6 +137,11 @@ public class OdysseyMenuSelectorActivityTest {
                                 3),
                         isDisplayed()));
         appCompatButton.perform(click());
+        //Check the view pager is visible
+        onView(ViewMatchers.withId(R.id.my_music_viewpager)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+
+        //Check position
+        onView(withId(R.id.my_music_viewpager)).check(isAtPosition(3));
     }
 
     @Test

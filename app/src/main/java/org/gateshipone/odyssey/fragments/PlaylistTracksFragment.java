@@ -171,7 +171,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
     }
 
     /**
-     * Play the playlist from the current position.
+     * Play the playlist from the current position. Playlists
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

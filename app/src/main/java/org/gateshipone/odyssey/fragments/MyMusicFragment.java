@@ -28,6 +28,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -108,7 +109,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
      * enum for the default tab
      */
     public enum DEFAULTTAB {
-        ARTISTS, ALBUMS, TRACKS
+        ARTISTS, ALBUMS, TRACKS, PLAYLISTS
     }
 
     public static MyMusicFragment newInstance(final DEFAULTTAB defaulttab) {
@@ -157,6 +158,8 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
                 case 2:
                     drawable = ResourcesCompat.getDrawable(res, R.drawable.ic_my_library_music_24dp, null);
                     break;
+                case 3:
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.ic_queue_music_24dp,null);
             }
 
             if (drawable != null) {
@@ -191,6 +194,9 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
                     break;
                 case TRACKS:
                     mMyMusicViewPager.setCurrentItem(2, false);
+                    break;
+                case PLAYLISTS:
+                    mMyMusicViewPager.setCurrentItem(3, false);
                     break;
             }
         }
@@ -309,7 +315,11 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
 
         if (fragment != null) {
             fragment.getContent();
-
+            //In order to maintain and reuse our playlist fragment we have to reupdate the toolbar name and refresh its data
+            if(tab.getPosition() == 3) {
+                mToolbarAndFABCallback.setupToolbar(getString(R.string.fragment_title_my_music), true, true, false);
+                fragment.refreshContent();
+            }
             // Disable memory trimming to prevent removing the shown data
             fragment.enableMemoryTrimming(false);
         }
@@ -409,7 +419,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
      * Custom pager adapter to retrieve already registered fragments.
      */
     private static class MyMusicPagerAdapter extends FragmentStatePagerAdapter {
-        static final int NUMBER_OF_PAGES = 3;
+        static final int NUMBER_OF_PAGES = 4;
 
         private final SparseArray<OdysseyFragment<?>> mRegisteredFragments;
 
@@ -447,6 +457,8 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
                     return AlbumsFragment.newInstance();
                 case 2:
                     return AllTracksFragment.newInstance();
+                case 3:
+                    return SavedPlaylistsFragment.newInstance();
                 default:
                     // should not happen throw exception
                     throw new IllegalStateException("No fragment defined to return");
