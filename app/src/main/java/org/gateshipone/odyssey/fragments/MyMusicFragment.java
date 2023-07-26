@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
@@ -251,6 +252,8 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
             mToolbarAndFABCallback.setupFAB(getPlayButtonListener(mMyMusicViewPager.getCurrentItem()));
             // set toolbar behaviour and title
             mToolbarAndFABCallback.setupToolbar(getString(R.string.fragment_title_my_music), true, true, false);
+
+
         }
     }
 

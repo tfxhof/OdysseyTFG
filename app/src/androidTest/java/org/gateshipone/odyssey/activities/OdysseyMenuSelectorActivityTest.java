@@ -87,11 +87,7 @@ public class OdysseyMenuSelectorActivityTest {
                                 1),
                         isDisplayed()));
         appCompatButton.perform(click());
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
         //Check the view pager is visible
         onView(ViewMatchers.withId(R.id.my_music_viewpager)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
@@ -167,6 +163,29 @@ public class OdysseyMenuSelectorActivityTest {
         onView(withId(R.id.my_music_viewpager)).check(isAtPosition(2));
     }
 
+    @Test
+    public void odysseyMenuSelectorActivityTestBack() {
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.button_artists), withText("Artists"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+        pressBack();
+        onView(withId(R.id.button_artists)).check(matches(isDisplayed()));
+    }
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 

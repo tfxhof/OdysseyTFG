@@ -41,6 +41,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -203,7 +205,11 @@ public class OdysseyMainActivity extends GenericActivity
             drawer.addDrawerListener(mDrawerToggle);
             mDrawerToggle.syncState();
         }
-
+        //Initialize toolbar home button
+        ImageButton homeButton = findViewById(R.id.my_home_button);
+        homeButton.setOnClickListener(v -> {
+            finish();
+        });
         int navId = switchToSettings ? R.id.nav_settings : getDefaultViewID();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -250,8 +256,6 @@ public class OdysseyMainActivity extends GenericActivity
             transaction.commit();
 
         } else {
-            Log.d("test","AAAAAAAAA");
-            Log.d("test",getIntent().getStringExtra("tab"));
             String str = getIntent().getStringExtra("tab");
             Fragment fragment;
             if (str.equals("Playlists")) {
@@ -933,6 +937,7 @@ public class OdysseyMainActivity extends GenericActivity
 
             // FIXME DIRTY HACK: Manually fix the toolbar size to the screen width
             CollapsingToolbarLayout toolbar = findViewById(R.id.collapsing_toolbar);
+
             AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
 
             params.height = getWindow().getDecorView().getMeasuredWidth();
