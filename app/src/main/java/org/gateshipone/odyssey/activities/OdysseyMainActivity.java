@@ -34,6 +34,7 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -215,7 +216,8 @@ public class OdysseyMainActivity extends GenericActivity
         ListView currentPlaylistListView = findViewById(R.id.list_linear_listview);
         registerForContextMenu(currentPlaylistListView);
 
-        if (findViewById(R.id.fragment_container) != null && (savedInstanceState == null)) {
+        if (findViewById(R.id.fragment_container) != null && (savedInstanceState == null)
+                &&getIntent().getStringExtra("tab")==null) {
             Fragment fragment;
 
             if (navId == R.id.nav_saved_playlists) {
@@ -246,13 +248,29 @@ public class OdysseyMainActivity extends GenericActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);
             transaction.commit();
-        }
 
+        } else {
+            Log.d("test","AAAAAAAAA");
+            Log.d("test",getIntent().getStringExtra("tab"));
+            String str = getIntent().getStringExtra("tab");
+            Fragment fragment;
+            if (str.equals("Playlists")) {
+                fragment = SavedPlaylistsFragment.newInstance();
+            }else {
+                fragment = MyMusicFragment.newInstance(MyMusicFragment.DEFAULTTAB.valueOf(str));
+            }
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.commit();
+        }
         // ask for permissions
         requestPermissionExternalStorage();
-
         // check if battery optimization is active
         checkBatteryOptimization();
+
+
+
     }
 
     @Override

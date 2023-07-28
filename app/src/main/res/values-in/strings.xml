@@ -24,7 +24,11 @@
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Izin Penyimpanan diperlukan untuk memuat file musik.</string>
-
+    <!-- menu selector  -->
+    <string name="menu_artists">Artis</string>
+    <string name="menu_album">Album</string>
+    <string name="menu_playlist">Daftar Putar</string>
+    <string name="menu_songs">Lagu</string>
     <!-- nav drawer -->
     <string name="navigation_drawer_open">Buka panel navigasi</string>
     <string name="navigation_drawer_close">Tutup panel navigasi</string>
