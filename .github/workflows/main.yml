@@ -1,11 +1,11 @@
-  name: cr
+name: cr
     
-  on:
+on:
     push:
       tags:
         - 'v*'
 
-  jobs:
+jobs:
     rl:
       name: Create Release
 
