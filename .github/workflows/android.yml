@@ -38,3 +38,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonar --stacktrace
+      - name: Build & Publish Debug APK
+        # You may pin to the exact commit or the version.
+        # uses: ShaunLWM/action-release-debugapk@d804d8fbf2982783eeffb6fa9e12bf37beb519bd
+        uses: ShaunLWM/action-release-debugapk@0.0.7
+        with:
+          # Github secret token to allow automated publishing of APK to release.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          # Github repository branch name.
+          REPO_BRANCH: master
