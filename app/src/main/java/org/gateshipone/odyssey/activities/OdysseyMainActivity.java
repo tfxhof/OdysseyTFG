@@ -34,14 +34,12 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -207,9 +205,7 @@ public class OdysseyMainActivity extends GenericActivity
         }
         //Initialize toolbar home button
         ImageButton homeButton = findViewById(R.id.my_home_button);
-        homeButton.setOnClickListener(v -> {
-            finish();
-        });
+        homeButton.setOnClickListener(v -> finish());
         int navId = switchToSettings ? R.id.nav_settings : getDefaultViewID();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -258,12 +254,7 @@ public class OdysseyMainActivity extends GenericActivity
         } else {
             String str = getIntent().getStringExtra("tab");
             Fragment fragment;
-            //if (str.equals("Playlists")) {
-                //fragment = SavedPlaylistsFragment.newInstance();
-
-            //}else {
-                fragment = MyMusicFragment.newInstance(MyMusicFragment.DEFAULTTAB.valueOf(str));
-            //}
+            fragment = MyMusicFragment.newInstance(MyMusicFragment.DEFAULTTAB.valueOf(str));
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);

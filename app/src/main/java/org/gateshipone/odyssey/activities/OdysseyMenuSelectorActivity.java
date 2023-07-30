@@ -58,7 +58,6 @@ public class OdysseyMenuSelectorActivity extends AppCompatActivity {
         });
 
         bPlaylists.setOnClickListener(v -> {
-            //String str = "Playlists";
             String str = String.valueOf(MyMusicFragment.DEFAULTTAB.PLAYLISTS);
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
 
@@ -69,11 +68,5 @@ public class OdysseyMenuSelectorActivity extends AppCompatActivity {
             startActivity(new Intent(OdysseyMenuSelectorActivity.this, OdysseyMainActivity.class).putExtra("tab", str));
 
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        super.onDestroy();
     }
 }
