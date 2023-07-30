@@ -73,11 +73,6 @@ public class OdysseyMenuSelectorActivityTest {
 
     @Test
     public void odysseyMenuSelectorActivityTestArtists() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_artists), withText("Artists"),
                         childAtPosition(
@@ -97,13 +92,6 @@ public class OdysseyMenuSelectorActivityTest {
 
     @Test
     public void odysseyMenuSelectorActivityTestAlbums() {
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_albums), withText("Albums"),
                         childAtPosition(
@@ -122,12 +110,6 @@ public class OdysseyMenuSelectorActivityTest {
 
     @Test
     public void odysseyMenuSelectorActivityTestPlaylists() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_playlists), withText("My Playlists"),
                         childAtPosition(
@@ -146,12 +128,6 @@ public class OdysseyMenuSelectorActivityTest {
 
     @Test
     public void odysseyMenuSelectorActivityTestMyMusic() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_songs), withText("My songs"),
                         childAtPosition(
@@ -170,15 +146,6 @@ public class OdysseyMenuSelectorActivityTest {
 
     @Test
     public void odysseyMenuSelectorActivityTestBack() {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_artists), withText("Artists"),
                         childAtPosition(

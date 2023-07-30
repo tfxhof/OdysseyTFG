@@ -28,7 +28,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,7 +39,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
@@ -316,7 +314,7 @@ public class MyMusicFragment extends Fragment implements TabLayout.OnTabSelected
         if (fragment != null) {
             fragment.getContent();
             //In order to maintain and reuse our playlist fragment we have to reupdate the toolbar name and refresh its data
-            if(tab.getPosition() == 3) {
+            if(tab.getPosition() == 3 && (mToolbarAndFABCallback != null)) {
                 mToolbarAndFABCallback.setupToolbar(getString(R.string.fragment_title_my_music), true, true, false);
                 fragment.refreshContent();
             }

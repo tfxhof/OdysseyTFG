@@ -59,15 +59,6 @@ public class OdysseyHomeButtonTest {
 
     @Test
     public void odysseyHomeButtonTest() {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.button_artists), withText("Artists"),
                         childAtPosition(
@@ -77,15 +68,6 @@ public class OdysseyHomeButtonTest {
                                 1),
                         isDisplayed()));
         appCompatButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(700);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         ViewInteraction imageButton = onView(
                 allOf(withId(R.id.my_home_button),
@@ -102,15 +84,6 @@ public class OdysseyHomeButtonTest {
                                 0),
                         isDisplayed()));
         appCompatImageButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(700);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         ViewInteraction button = onView(
                 allOf(withId(R.id.button_artists), withText("Artists"),
