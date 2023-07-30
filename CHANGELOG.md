@@ -1,5 +1,8 @@
 # Changelog Odyssey
 
+## v1.3.0 Tag: release-37 (2022-07-27)
+* Update main menu
+
 ## Version: 1.2.3 Tag: release-37 (2022-07-27)
 
 * Update french translation
