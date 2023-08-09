@@ -28,12 +28,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -92,6 +94,7 @@ import org.gateshipone.odyssey.listener.ToolbarAndFABCallback;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.models.PlaylistModel;
+import org.gateshipone.odyssey.models.TrackRandomGenerator;
 import org.gateshipone.odyssey.utils.FileExplorerHelper;
 import org.gateshipone.odyssey.utils.FileUtils;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
@@ -113,7 +116,7 @@ public class OdysseyMainActivity extends GenericActivity
         NOWPLAYING,
         SETTINGS
     }
-
+    private TrackRandomGenerator mTrackRandomGenerator;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DRAG_STATUS mNowPlayingDragStatus;
@@ -139,7 +142,7 @@ public class OdysseyMainActivity extends GenericActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean switchToSettings = false;
-
+        mTrackRandomGenerator = new TrackRandomGenerator();
         // restore drag state
         if (savedInstanceState != null) {
             mSavedNowPlayingDragStatus = DRAG_STATUS.values()[savedInstanceState.getInt(MAINACTIVITY_SAVED_INSTANCE_NOW_PLAYING_DRAG_STATUS)];
@@ -264,7 +267,6 @@ public class OdysseyMainActivity extends GenericActivity
         requestPermissionExternalStorage();
         // check if battery optimization is active
         checkBatteryOptimization();
-
 
 
     }
@@ -630,24 +632,60 @@ public class OdysseyMainActivity extends GenericActivity
 
     @Override
     public void onAlbumSelected(AlbumModel album, Bitmap bitmap) {
-        // Create fragment and give it an argument for the selected article
-        AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(album, bitmap);
+        //personal
+        //flag used to distinguish when to start playing the album automatically(only in save the album)
+        int flag = 0;
+        AlbumModel albumFinal = null;
+        String albumName="Save the album";
+        if(album.getAlbumName().equals(albumName)){
+            List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
+            //delete save the album
+            allAlbums.remove(0);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            mTrackRandomGenerator.fillAlbumFromList(allAlbums);
+            int num;
+            AlbumModel albumIterator;
+            while(albumFinal== null) {
+                num = mTrackRandomGenerator.getRandomAlbumNumber();
+                albumIterator = allAlbums.get(num);
+                if(!albumIterator.getAlbumName().equals(albumName)){
+                    albumFinal = albumIterator;
+                }
+            }
+            flag=1;
+        } else {
+            albumFinal = album;
+        }
+        if (albumFinal!=null) {
+            // Create fragment and give it an argument for the selected article
+            AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
 
-        // set enter / exit animation
-        newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
-        newFragment.setExitTransition(new Slide(Gravity.TOP));
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        // Replace whatever is in the fragment_container view with this
-        // fragment,
-        // and add the transaction to the back stack so the user can navigate
-        // back
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack("AlbumTracksFragment");
+            // set enter / exit animation
+            newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
+            newFragment.setExitTransition(new Slide(Gravity.TOP));
 
-        // Commit the transaction
-        transaction.commit();
+            // Replace whatever is in the fragment_container view with this
+            // fragment,
+            // and add the transaction to the back stack so the user can navigate
+            // back
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack("AlbumTracksFragment");
+            // Commit the transaction
+            transaction.commit();
+
+            if (flag==1) {
+                try {
+                    getPlaybackService().clearPlaylist();
+                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+                    getPlaybackService().togglePause();
+                } catch (RemoteException e) {
+                    Log.d("Error sta","Cannot toggle play stop");
+                }
+            }
+
+        }
     }
 
     @Override

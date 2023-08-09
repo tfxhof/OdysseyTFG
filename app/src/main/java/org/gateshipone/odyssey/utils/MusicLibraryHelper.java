@@ -589,6 +589,10 @@ public class MusicLibraryHelper {
 
             cursor.close();
         }
+        //personal
+        //We add this album manually due to the save the album functionality,this way we dont need
+        //to create a fake track and artist and will hide it from th device storage
+        albums.add(0,new AlbumModel( "Save the album","", "a", 9999));
         return albums;
     }
 
