@@ -268,6 +268,15 @@
     <string name="contributor_translator_french">Traduzione Francese</string>
     <string name="contributor_translator_polish">Traduzione Polacco</string>
 
+    <string name="preference_random_intelligence_dialog_title">Intelligenza casuale: %d %%</string>
+    <string name="preference_random_intelligence_dumber">Casuale seleziona completamente le tracce in base all album.</string>
+    <string name="preference_random_intelligence_dumb">Casuale seleziona principalmente le tracce completamente in base all album con quasi nessuna considerazione per gli artisti.</string>
+    <string name="preference_random_intelligence_balanced">Casuale seleziona le tracce in base agli artisti E agli album.</string>
+    <string name="preference_random_intelligence_intelligent">Casuale seleziona principalmente le tracce in base all artista con quasi nessuna considerazione per gli album.</string>
+    <string name="preference_random_intelligence_more_intelligent">Casuale seleziona completamente le tracce in base all artista.</string>
+
+    <string name="preference_smart_random_title">Casuale intelligente</string>
+    <string name="preference_smart_random_text">Seleziona una preferenza di riproduzione casuale. Questa opzione consente una riproduzione casuale più uniformemente distribuita (per gli artisti). Questo è utile per le playlist con molte tracce di un artista e poche tracce di altri artisti.</string>
     <!-- Thirdparty Licenses dialog -->
     <string name="odyssey_thirdparty_licenses_dialog_title">Licenze di Terze Parti</string>
 </resources>

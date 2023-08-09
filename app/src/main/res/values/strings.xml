@@ -354,10 +354,10 @@
     </plurals>
 
     <string name="preference_random_intelligence_dialog_title">Random intelligence: %d %%</string>
-    <string name="preference_random_intelligence_dumber">Random selects tracks completely random with no regard to the artists.</string>
-    <string name="preference_random_intelligence_dumb">Random mostly selects tracks completely random with almost no regard to the artists.</string>
-    <string name="preference_random_intelligence_balanced">Random selects tracks balanced between artists - and track-based selection.</string>
-    <string name="preference_random_intelligence_intelligent">Random mostly selects tracks based on the artist.</string>
+    <string name="preference_random_intelligence_dumber">Random completely selects tracks based on the album.</string>
+    <string name="preference_random_intelligence_dumb">Random mostly selects tracks completely based on the album with almost no regard to the artists.</string>
+    <string name="preference_random_intelligence_balanced">Random selects tracks based on the artists AND the albums.</string>
+    <string name="preference_random_intelligence_intelligent">Random mostly selects tracks based on the artist with almost no regard to the albums.</string>
     <string name="preference_random_intelligence_more_intelligent">Random completely selects tracks based on the artist.</string>
 
     <string name="preference_smart_random_title">Smart random</string>

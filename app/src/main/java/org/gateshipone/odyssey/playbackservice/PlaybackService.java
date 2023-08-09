@@ -1798,6 +1798,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         if (mCurrentList.size() > 0) {
             mNextPlayingIndex = mTrackRandomGenerator.getRandomTrackNumber();
         }
+        Log.d(TAG, "randomize next track");
     }
 
     /**
@@ -1913,6 +1914,7 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
                 // we could release wakelock here again, because the GaplessPlayer is now wakelocking again
                 mSongTransitionWakelock.release();
             }
+            Log.d(TAG,mRandom.toString());
         }
     }
 

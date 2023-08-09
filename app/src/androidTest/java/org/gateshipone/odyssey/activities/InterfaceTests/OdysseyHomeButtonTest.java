@@ -20,7 +20,7 @@
  *
  */
 
-package org.gateshipone.odyssey.activities;
+package org.gateshipone.odyssey.activities.InterfaceTests;
 
 
 import static androidx.test.espresso.Espresso.onView;
@@ -42,6 +42,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import org.gateshipone.odyssey.R;
+import org.gateshipone.odyssey.activities.OdysseyMenuSelectorActivity;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;

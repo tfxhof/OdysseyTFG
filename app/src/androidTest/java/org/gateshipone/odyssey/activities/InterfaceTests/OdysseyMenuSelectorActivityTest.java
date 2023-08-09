@@ -1,4 +1,3 @@
-package org.gateshipone.odyssey.activities;
 /*
  * Copyright (C) 2023 Team Gateship-One
  * (Hendrik Borghorst & Frederik Luetkes)
@@ -20,6 +19,8 @@ package org.gateshipone.odyssey.activities;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+package org.gateshipone.odyssey.activities.InterfaceTests;
 
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.NoMatchingViewException;

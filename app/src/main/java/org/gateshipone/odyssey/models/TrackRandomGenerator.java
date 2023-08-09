@@ -22,6 +22,7 @@
 
 package org.gateshipone.odyssey.models;
 
+import android.os.Build;
 import android.util.Log;
 
 import org.gateshipone.odyssey.BuildConfig;
@@ -42,40 +43,60 @@ public class TrackRandomGenerator {
     private static final String TAG = TrackRandomGenerator.class.getSimpleName();
 
     /**
-     * Underlying data structure for artist-track buckets
+     * Underlying data structure for artist-track buckets used to randomize by artists
      */
-    private final ArrayList<List<Integer>> mData;
+    private final ArrayList<List<Integer>> mDataArtists;
+
+    /**
+     * Underlying data structure for artist-album buckets used for save the album
+     */
     private final ArrayList<List<Integer>> mDataAlbum;
+
+    /**
+     * Underlying data structure for albums-tracks buckets used to randomize by album
+     */
+    private final ArrayList<List<Integer>> mDataAlbumTracks;
+
+    /**
+     * Underlying data structure for albums-tracks buckets used to randomize by artists AND album
+     */
+    private final ArrayList<List<Integer>> mDataSelectedAlbumTracks;
+
     /**
      * Creates an empty data structure
      */
     public TrackRandomGenerator() {
-        mData = new ArrayList<>();
+        mDataArtists = new ArrayList<>();
         mDataAlbum = new ArrayList<>();
+        mDataAlbumTracks = new ArrayList<>();
+        mDataSelectedAlbumTracks = new ArrayList<>();
     }
 
     private final BetterPseudoRandomGenerator mRandomGenerator = new BetterPseudoRandomGenerator();
 
     private List<TrackModel> mOriginalList;
     private List<AlbumModel> mOriginalListAlbum;
+    private List<TrackModel> mOriginalListAlbumTracks;
 
     private int mIntelligenceFactor;
 
     /**
-     * Creates a list of artists and their tracks with position in the original playlist
-     *
+     * Creates a list of artists and their tracks with position in the original playlist.
+     * Also creates a list of albums and tehir tracks with position in the original playlist.
      * @param tracks List of tracks
      */
     public synchronized void fillFromList(List<TrackModel> tracks) {
+
+
         // Clear all entries
-        mData.clear();
+        mDataArtists.clear();
+        mDataAlbumTracks.clear();
 
         mOriginalList = tracks;
+        mOriginalListAlbumTracks = tracks;
 
-        if (mIntelligenceFactor == 0) {
-            return;
-        }
         LinkedHashMap<String, List<Integer>> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<String, List<Integer>> hashMapAlbums = new LinkedHashMap<>();
 
         if (tracks == null || tracks.isEmpty()) {
             // Abort for empty data structures
@@ -86,15 +107,22 @@ public class TrackRandomGenerator {
         int trackNo = 0;
         for (TrackModel track : tracks) {
             String artistName = track.getTrackArtistName();
+            String albumName = track.getTrackAlbumName();
+
             List<Integer> list = hashMap.get(artistName);
+            List<Integer> listAlbum = hashMapAlbums.get(albumName);
 
             if (list == null) {
-                // If artist is not already in HashMap add a new list for it
                 list = new ArrayList<>();
                 hashMap.put(artistName, list);
             }
-            // Add pair of position in original playlist and track itself to artists bucket list
             list.add(trackNo);
+
+            if (listAlbum == null) {
+                listAlbum = new ArrayList<>();
+                hashMapAlbums.put(albumName, listAlbum);
+            }
+            listAlbum.add(trackNo);
 
             // Increase the track number (index) of the original playlist
             trackNo++;
@@ -103,11 +131,14 @@ public class TrackRandomGenerator {
             Log.v(TAG, "Recreated buckets with: " + hashMap.size() + " artists");
         }
 
-        mData.addAll(hashMap.values());
-        Collections.shuffle(mData);
+        mDataArtists.addAll(hashMap.values());
+        Collections.shuffle(mDataArtists);
+        mDataAlbumTracks.addAll(hashMapAlbums.values());
+        Collections.shuffle(mDataAlbumTracks);
     }
     /**
-     * Creates a list of artists and their albums with position in the original playlist
+     * Creates a list of artists and their albums with position in the original playlist used
+     * for save the album functionality
      *
      * @param albums List of albums
      */
@@ -117,9 +148,6 @@ public class TrackRandomGenerator {
 
         mOriginalListAlbum = albums;
 
-        if (mIntelligenceFactor == 0) {
-            return;
-        }
         LinkedHashMap<String, List<Integer>> hashMap = new LinkedHashMap<>();
 
         if (albums == null || albums.isEmpty()) {
@@ -153,71 +181,245 @@ public class TrackRandomGenerator {
     }
 
     /**
+     * Creates a list of albums and their tracks
+     *
+     * @param tracks List of tracks
+     */
+    private synchronized void fillArtistsAlbumfromList(List<TrackModel> tracks) {
+        LinkedHashMap<String, List<Integer>> hashMap = new LinkedHashMap<>();
+        // Clear all entries
+        mDataSelectedAlbumTracks.clear();
+        if (tracks == null || tracks.isEmpty()) {
+            // Abort for empty data structures
+            return;
+        }
+
+        // Iterate over the list and add all track position to their artist lists
+        int trackNo = 0;
+        for (TrackModel track : tracks) {
+            String albumName = track.getTrackAlbumName();
+            List<Integer> list = hashMap.get(albumName);
+
+            if (list == null) {
+                // If artist is not already in HashMap add a new list for it
+                list = new ArrayList<>();
+                hashMap.put(albumName, list);
+            }
+            // Add pair of position in original playlist and track itself to artists bucket list
+            list.add(trackNo);
+            trackNo++;
+        }
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Recreated buckets with: " + hashMap.size() + " artists");
+        }
+
+        mDataSelectedAlbumTracks.addAll(hashMap.values());
+        Collections.shuffle(mDataSelectedAlbumTracks);
+    }
+
+    /**
      * Generates a randomized track number within the original track list, that was used for the call
      * of fillFromList. The random track number should be equally distributed over all artists.
      *
      * @return A random number of a track of the original track list
      */
     public synchronized int getRandomTrackNumber() {
-        // Randomize if a more balanced (per artist) approach or a traditional approach should be used
-        boolean smartRandom = mRandomGenerator.getLimitedRandomNumber(100) < mIntelligenceFactor;
+        // Randomize if we randomize by artists or by album
+        Integer songNumber;
 
-        if (smartRandom) {
+        if(mIntelligenceFactor == 50){
+            //First randomize by artist then by album
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Use smart random");
+                Log.v(TAG, "Use smart random for artists and albums");
             }
-            if (mData.isEmpty()) {
+            if (mDataArtists.isEmpty()) {
                 // Refill list from original list
                 fillFromList(mOriginalList);
             }
-
+            if (mDataAlbumTracks.isEmpty()) {
+                // Refill list from original list
+                fillFromList(mOriginalListAlbumTracks);
+            }
             // First level random, get artist
-            int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mData.size());
+            int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataArtists.size());
 
             // Get artists bucket list to artist number
             List<Integer> artistsTracks;
 
-
             // Get the list of tracks belonging to the selected artist
-            artistsTracks = mData.get(randomArtistNumber);
+            artistsTracks = mDataArtists.get(randomArtistNumber);
+            List<TrackModel> tracks = new ArrayList<TrackModel>();
+            for(Integer i:artistsTracks) {
+               tracks.add( mOriginalList.get(i.intValue()));
+            }
+            //Divide all the albums from the artist
+            fillArtistsAlbumfromList(tracks);
 
-            // Check if an artist was found
-            if (artistsTracks == null) {
+            //Select a random album
+            int randomAlbumNumber = mRandomGenerator.getLimitedRandomNumber(mDataSelectedAlbumTracks.size());
+            // Get artists bucket list to album number
+            List<Integer> albumTracks = mDataSelectedAlbumTracks.get(randomAlbumNumber);
+
+            // Check if an album was found
+            if (albumTracks == null) {
                 return 0;
             }
+            //get random track
+            int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(albumTracks.size());
 
-            int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(artistsTracks.size());
-
-            Integer songNumber = artistsTracks.get(randomTrackNo);
+            songNumber = albumTracks.get(randomTrackNo);
 
             // Remove track to prevent double plays
-            artistsTracks.remove(randomTrackNo);
+            albumTracks.remove(randomTrackNo);
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Tracks from artist left: " + artistsTracks.size());
+                Log.v(TAG, "Tracks from artist left: " + albumTracks.size());
             }
 
             // Check if tracks from this artist are left, otherwise remove the artist
-            if (artistsTracks.isEmpty()) {
+            if (albumTracks.isEmpty()) {
                 // No tracks left from artist, remove from map
-                mData.remove(randomArtistNumber);
+                mDataAlbumTracks.remove(randomAlbumNumber);
+                mDataArtists.remove(randomArtistNumber);
                 if (BuildConfig.DEBUG) {
-                    Log.v(TAG, "Artists left: " + mData.size());
+                    Log.v(TAG, "Artists left: " + mDataAlbumTracks.size());
                 }
             }
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Selected artist no.: " + randomArtistNumber + " with internal track no.: " + randomTrackNo + " and original track no.: " + songNumber);
+                Log.v(TAG, "Selected artist no.: " + randomAlbumNumber + " with internal track no.: " + randomTrackNo + " and original track no.: " + songNumber);
             }
-            // Get random track number
-            return songNumber;
-        } else {
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Use traditional random");
+
+        }else if(mIntelligenceFactor == 100){
+            //Randomize only by artist
+            songNumber = getArtistSongNumber();
+
+        }else if(mIntelligenceFactor == 0){
+            //randomize only by album
+            songNumber = getAlbumSongNumber();
+
+        }else {
+            boolean onlyArtists = mRandomGenerator.getLimitedRandomNumber(100) <= mIntelligenceFactor;
+            if (onlyArtists) {
+                //Randomize only by artist
+                songNumber = getArtistSongNumber();
+            }else {
+                //randomize only by album
+                songNumber = getAlbumSongNumber();
             }
-            return mRandomGenerator.getLimitedRandomNumber(mOriginalList.size());
         }
+        return songNumber;
     }
+
     /**
-     * Generates a randomized track number within the original track list, that was used for the call
+     * Generates a randomized track number inside the buckets album-tracks
+     * @return the number of a track inside the buckets album-tracks
+     */
+    private synchronized int getAlbumSongNumber(){
+        int songNumber = 0;
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Use smart random for albums");
+        }
+        if (mDataAlbumTracks.isEmpty()) {
+            // Refill list from original list
+            fillFromList(mOriginalListAlbumTracks);
+        }
+
+        // First level random, get album
+        int randomAlbumNumber = mRandomGenerator.getLimitedRandomNumber(mDataAlbumTracks.size());
+
+        // Get artist bucket to album number
+        List<Integer> albumTracks;
+        Log.v(TAG, "Use smart random for albums: " + Integer.toString(randomAlbumNumber) + " size " + mDataAlbumTracks.size());
+
+        // Get the list of tracks belonging to the selected album
+        albumTracks = mDataAlbumTracks.get(randomAlbumNumber);
+        Log.v(TAG,"Use smart random size2  : " + albumTracks.size());
+        for (Integer i : albumTracks) {
+            Log.v(TAG,"Use smart random recorrido : " + Integer.toString(i));
+        }
+        // Check if an album was found
+        if (albumTracks == null) {
+            return 0;
+        }
+
+        int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(albumTracks.size());
+
+        songNumber = albumTracks.get(randomTrackNo);
+
+        // Remove track to prevent double plays
+        albumTracks.remove(randomTrackNo);
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Tracks from artist left: " + albumTracks.size());
+        }
+
+        // Check if tracks from this artist are left, otherwise remove the artist
+        if (albumTracks.isEmpty()) {
+            // No tracks left from artist, remove from map
+            mDataAlbumTracks.remove(randomAlbumNumber);
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, "Artists left: " + mDataAlbumTracks.size());
+            }
+        }
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Selected artist no.: " + randomAlbumNumber + " with internal track no.: " + randomTrackNo + " and original track no.: " + songNumber);
+        }
+        return songNumber;
+    }
+
+    /**
+     * Generates a randomized track number inside the buckets artist-tracks
+     * @return the number of a random track inside the buckets artist-tracks
+     */
+    private synchronized int getArtistSongNumber(){
+        int songNumber = 0;
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Use smart random for artists");
+        }
+        if (mDataArtists.isEmpty()) {
+            // Refill list from original list
+            fillFromList(mOriginalList);
+        }
+
+        // First level random, get artist
+        int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataArtists.size());
+
+        // Get artists bucket list to artist number
+        List<Integer> artistsTracks;
+
+
+        // Get the list of tracks belonging to the selected artist
+        artistsTracks = mDataArtists.get(randomArtistNumber);
+
+        // Check if an artist was found
+        if (artistsTracks == null) {
+            return 0;
+        }
+
+        int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(artistsTracks.size());
+
+        songNumber = artistsTracks.get(randomTrackNo);
+
+        // Remove track to prevent double plays
+        artistsTracks.remove(randomTrackNo);
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Tracks from artist left: " + artistsTracks.size());
+        }
+
+        // Check if tracks from this artist are left, otherwise remove the artist
+        if (artistsTracks.isEmpty()) {
+            // No tracks left from artist, remove from map
+            mDataArtists.remove(randomArtistNumber);
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, "Artists left: " + mDataArtists.size());
+            }
+        }
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Selected artist no.: " + randomArtistNumber + " with internal track no.: " + randomTrackNo + " and original track no.: " + songNumber);
+        }
+        return songNumber;
+    }
+
+    /**
+     * Generates a randomized album number within the original track list, that was used for the call
      * of fillFromList. The random track number should be equally distributed over all artists.
      *
      * @return A random number of a track of the original track list
@@ -230,7 +432,7 @@ public class TrackRandomGenerator {
             if (BuildConfig.DEBUG) {
                 Log.v(TAG, "Use smart random");
             }
-            if (mData.isEmpty()) {
+            if (mDataArtists.isEmpty()) {
                 // Refill list from original list
                 fillAlbumFromList(mOriginalListAlbum);
             }
@@ -280,6 +482,7 @@ public class TrackRandomGenerator {
             return mRandomGenerator.getLimitedRandomNumber(mOriginalListAlbum.size());
         }
     }
+
     public void setEnabled(int factor) {
         if (mIntelligenceFactor == 0 && factor != 0) {
             // Redo track buckets
