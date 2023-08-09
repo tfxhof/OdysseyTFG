@@ -135,6 +135,7 @@ public class OdysseyMainActivity extends GenericActivity
 
     public static final String MAINACTIVITY_SAVED_INSTANCE_NOW_PLAYING_VIEW_SWITCHER_CURRENT_VIEW = "OdysseyMainActivity.NowPlayingViewSwitcherCurrentView";
 
+    private int mIntelligenceFactor;
     private Uri mSentUri;
 
     private boolean mShowNPV = false;
@@ -142,7 +143,11 @@ public class OdysseyMainActivity extends GenericActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean switchToSettings = false;
+        //personal
         mTrackRandomGenerator = new TrackRandomGenerator();
+        // Get preferences
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mIntelligenceFactor = sharedPrefs.getInt(getString(R.string.pref_smart_random_key_int), getResources().getInteger(R.integer.pref_smart_random_default));
         // restore drag state
         if (savedInstanceState != null) {
             mSavedNowPlayingDragStatus = DRAG_STATUS.values()[savedInstanceState.getInt(MAINACTIVITY_SAVED_INSTANCE_NOW_PLAYING_DRAG_STATUS)];
@@ -641,7 +646,7 @@ public class OdysseyMainActivity extends GenericActivity
             List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
             //delete save the album
             allAlbums.remove(0);
-
+            mTrackRandomGenerator.setEnabled(mIntelligenceFactor);
             mTrackRandomGenerator.fillAlbumFromList(allAlbums);
             int num;
             AlbumModel albumIterator;

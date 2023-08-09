@@ -225,6 +225,7 @@ public class TrackRandomGenerator {
     public synchronized int getRandomAlbumNumber() {
         // Randomize if a more balanced (per artist) approach or a traditional approach should be used
         boolean smartRandom = mRandomGenerator.getLimitedRandomNumber(100) < mIntelligenceFactor;
+        Log.d(TAG, Integer.toString(mIntelligenceFactor));
         if (smartRandom) {
             if (BuildConfig.DEBUG) {
                 Log.v(TAG, "Use smart random");
