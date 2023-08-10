@@ -496,6 +496,42 @@ public class TrackRandomGenerator {
         mIntelligenceFactor = factor;
     }
 
+    public ArrayList<List<Integer>> getmDataArtists() {
+        return mDataArtists;
+    }
+
+    public ArrayList<List<Integer>> getmDataAlbum() {
+        return mDataAlbum;
+    }
+
+    public ArrayList<List<Integer>> getmDataAlbumTracks() {
+        return mDataAlbumTracks;
+    }
+
+    public ArrayList<List<Integer>> getmDataSelectedAlbumTracks() {
+        return mDataSelectedAlbumTracks;
+    }
+
+    public BetterPseudoRandomGenerator getmRandomGenerator() {
+        return mRandomGenerator;
+    }
+
+    public List<TrackModel> getmOriginalList() {
+        return mOriginalList;
+    }
+
+    public List<AlbumModel> getmOriginalListAlbum() {
+        return mOriginalListAlbum;
+    }
+
+    public List<TrackModel> getmOriginalListAlbumTracks() {
+        return mOriginalListAlbumTracks;
+    }
+
+    public int getmIntelligenceFactor() {
+        return mIntelligenceFactor;
+    }
+
     private static class BetterPseudoRandomGenerator {
         /**
          * Timeout in ns (1 second)
@@ -598,5 +634,7 @@ public class TrackRandomGenerator {
             Log.v(TAG, "Relative standard deviation: " + rsd + " %");
 
         }
+
+
     }
 }
