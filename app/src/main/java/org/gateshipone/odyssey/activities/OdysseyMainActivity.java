@@ -21,7 +21,6 @@
  */
 
 package org.gateshipone.odyssey.activities;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -667,7 +666,7 @@ public class OdysseyMainActivity extends GenericActivity
                     getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
                     getPlaybackService().togglePause();
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    Log.e("PBS",e.toString());
                 }
             }
 
