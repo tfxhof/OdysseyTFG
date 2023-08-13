@@ -21,6 +21,22 @@
   -->
 
 <resources>
+    <string name="playlist_type_global">Global</string>
+    <string name="playlist_type_local">Lokal</string>
+    <string name="dialog_no_browser_found_title">Kein Browser verfügbar</string>
+    <string name="dialog_no_browser_found_message">Dein Gerät hat keinen Browser.</string>
+    <string name="dialog_battery_opt_title">Batterieoptimierung aktiv</string>
+    <string name="dialog_battery_opt_message">
+    Batterieoptimierung für Odyssey ist aktiv.
+    \n\nDies wird verhindern, dass Odyssey die Wiedergabe nach der Unterbrechung der Hintergrundwiedergabe automatisch fortsetzt.
+    \n\nBitte deaktiviere diese Option, um sicherzustellen, dass Odyssey ordnungsgemäß funktioniert.
+    </string>
+    <string name="dialog_battery_opt_action_open_settings">Einstellungen öffnen</string>
+    <string name="preference_tracks_sort_order_title">Sortierreihenfolge der Albumtracks</string>
+    <string name="preference_tracks_sort_order_summary">Wähle die Sortierreihenfolge für die Tracks eines Albums aus.</string>
+
+    <string name="preference_album_tracks_sort_number">Tracknummer</string>
+    <string name="preference_album_tracks_sort_name">Anzeigename (Dateiname)</string>
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Toegang to opslag is nodig om muziek bestanden te laden.</string>
@@ -33,6 +49,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="contributor_translator_indonesia">Indonesische Übersetzung</string>
     <!-- nav drawer menu -->
     <string name="nav_menu_my_music">Mijn Muziek</string>
     <string name="nav_menu_saved_playlists">Afspeellijsten</string>

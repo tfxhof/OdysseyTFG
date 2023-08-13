@@ -21,7 +21,6 @@
  */
 
 package org.gateshipone.odyssey.activities;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -92,6 +91,7 @@ import org.gateshipone.odyssey.listener.ToolbarAndFABCallback;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.models.PlaylistModel;
+import org.gateshipone.odyssey.models.TrackRandomGenerator;
 import org.gateshipone.odyssey.utils.FileExplorerHelper;
 import org.gateshipone.odyssey.utils.FileUtils;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
@@ -113,7 +113,7 @@ public class OdysseyMainActivity extends GenericActivity
         NOWPLAYING,
         SETTINGS
     }
-
+    private TrackRandomGenerator mTrackRandomGenerator;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DRAG_STATUS mNowPlayingDragStatus;
@@ -132,6 +132,7 @@ public class OdysseyMainActivity extends GenericActivity
 
     public static final String MAINACTIVITY_SAVED_INSTANCE_NOW_PLAYING_VIEW_SWITCHER_CURRENT_VIEW = "OdysseyMainActivity.NowPlayingViewSwitcherCurrentView";
 
+    private int mIntelligenceFactor;
     private Uri mSentUri;
 
     private boolean mShowNPV = false;
@@ -139,7 +140,11 @@ public class OdysseyMainActivity extends GenericActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean switchToSettings = false;
-
+        //personal
+        mTrackRandomGenerator = new TrackRandomGenerator();
+        // Get preferences
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mIntelligenceFactor = sharedPrefs.getInt(getString(R.string.pref_smart_random_key_int), getResources().getInteger(R.integer.pref_smart_random_default));
         // restore drag state
         if (savedInstanceState != null) {
             mSavedNowPlayingDragStatus = DRAG_STATUS.values()[savedInstanceState.getInt(MAINACTIVITY_SAVED_INSTANCE_NOW_PLAYING_DRAG_STATUS)];
@@ -264,7 +269,6 @@ public class OdysseyMainActivity extends GenericActivity
         requestPermissionExternalStorage();
         // check if battery optimization is active
         checkBatteryOptimization();
-
 
 
     }
@@ -630,26 +634,79 @@ public class OdysseyMainActivity extends GenericActivity
 
     @Override
     public void onAlbumSelected(AlbumModel album, Bitmap bitmap) {
-        // Create fragment and give it an argument for the selected article
-        AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(album, bitmap);
+        //personal
+        //flag used to distinguish when to start playing the album automatically(only in save the album)
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        AlbumModel albumFinal = checkIfSaveTheAlbum(album);
 
-        // set enter / exit animation
-        newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
-        newFragment.setExitTransition(new Slide(Gravity.TOP));
+        if (albumFinal!=null) {
+            // Create fragment and give it an argument for the selected article
+            AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        // Replace whatever is in the fragment_container view with this
-        // fragment,
-        // and add the transaction to the back stack so the user can navigate
-        // back
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack("AlbumTracksFragment");
+            // set enter / exit animation
+            newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
+            newFragment.setExitTransition(new Slide(Gravity.TOP));
+            // Replace whatever is in the fragment_container view with this
+            // fragment,
+            // and add the transaction to the back stack so the user can navigate
+            // back
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack("AlbumTracksFragment");
+            // Commit the transaction
+            transaction.commit();
+            //IF we play save the album we want to start playing instantly, whereas
+            //if it is another album we dont want to star playing
+            //In order to do so we check that the final album is not the same as the input one
+            //if it is different is because it was save the album
+            if (!albumFinal.getAlbumName().equals(album.getAlbumName())) {
+                try {
+                    getPlaybackService().clearPlaylist();
+                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+                    getPlaybackService().togglePause();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        // Commit the transaction
-        transaction.commit();
+        }
     }
 
+    /**
+     * Checks if the input is save the album and returns another album if so
+     * @param album
+     * @return an album
+     */
+    private AlbumModel checkIfSaveTheAlbum(AlbumModel album){
+        if(album == null){
+            return null;
+        }
+        String albumName="Save the album";
+        AlbumModel albumFinal = null;
+        if(album.getAlbumName().equals(albumName)){
+            List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
+            //delete save the album
+            allAlbums.remove(0);
+            if(!allAlbums.isEmpty()) {
+                mTrackRandomGenerator.setEnabled(mIntelligenceFactor);
+                if(mTrackRandomGenerator.getmDataAlbum().isEmpty()) {
+                    mTrackRandomGenerator.fillAlbumFromList(allAlbums);
+                }
+                int num;
+                AlbumModel albumIterator;
+                while (albumFinal == null) {
+                    num = mTrackRandomGenerator.getRandomAlbumNumber();
+                    albumIterator = allAlbums.get(num);
+                    if (!albumIterator.getAlbumName().equals(albumName)) {
+                        albumFinal = albumIterator;
+                    }
+                }
+            }
+        } else{
+            albumFinal = album;
+        }
+        return albumFinal;
+    }
     @Override
     public void onDirectorySelected(final String dirPath, final boolean isRootDirectory) {
         onDirectorySelected(dirPath, isRootDirectory, true);
