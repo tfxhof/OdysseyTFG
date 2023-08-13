@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -646,7 +645,7 @@ public class OdysseyMainActivity extends GenericActivity
             List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
             //delete save the album
             allAlbums.remove(0);
-            if(allAlbums.size()>=1) {
+            if(!allAlbums.isEmpty()) {
                 mTrackRandomGenerator.setEnabled(mIntelligenceFactor);
                 if(mTrackRandomGenerator.getmDataAlbum().isEmpty()) {
                     mTrackRandomGenerator.fillAlbumFromList(allAlbums);
@@ -690,7 +689,7 @@ public class OdysseyMainActivity extends GenericActivity
                     getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
                     getPlaybackService().togglePause();
                 } catch (RemoteException e) {
-                    Log.d("Error sta","Cannot toggle play stop");
+                    e.printStackTrace();
                 }
             }
 

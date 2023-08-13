@@ -21,6 +21,14 @@
   -->
 
 <resources>
+    <string name="dialog_battery_opt_title">Optimasi Baterai Aktif</string>
+    <string name="dialog_battery_opt_message">
+    Optimasi baterai untuk Odyssey aktif.
+    \n\nIni akan mencegah Odyssey untuk secara otomatis melanjutkan pemutaran setelah pemutaran latar belakang dijeda.
+    \n\nHarap pertimbangkan untuk menonaktifkan opsi ini untuk memastikan bahwa Odyssey berfungsi dengan benar.
+    </string>
+    <string name="dialog_battery_opt_action_open_settings">Buka pengaturan</string>
+    <string name="playlist_type_global">Global</string>
 
     <!-- permission request -->
     <string name="permission_request_snackbar_explanation">Izin Penyimpanan diperlukan untuk memuat file musik.</string>

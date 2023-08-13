@@ -274,9 +274,62 @@
     <string name="preference_random_intelligence_balanced">Casuale seleziona le tracce in base agli artisti E agli album.</string>
     <string name="preference_random_intelligence_intelligent">Casuale seleziona principalmente le tracce in base all artista con quasi nessuna considerazione per gli album.</string>
     <string name="preference_random_intelligence_more_intelligent">Casuale seleziona completamente le tracce in base all artista.</string>
-
+    <string name="contributor_translator_czech">Traduzione in ceco</string>
+    <string name="contributor_translator_dutch">Traduzione in olandese</string>
+    <string name="contributor_translator_indonesia">Traduzione in indonesiano</string>
     <string name="preference_smart_random_title">Casuale intelligente</string>
     <string name="preference_smart_random_text">Seleziona una preferenza di riproduzione casuale. Questa opzione consente una riproduzione casuale più uniformemente distribuita (per gli artisti). Questo è utile per le playlist con molte tracce di un artista e poche tracce di altri artisti.</string>
     <!-- Thirdparty Licenses dialog -->
     <string name="odyssey_thirdparty_licenses_dialog_title">Licenze di Terze Parti</string>
+    <string name="snackbar_sleep_timer_confirmation_message">Timer di spegnimento impostato</string>
+    <string name="snackbar_uri_not_supported_message">Il percorso selezionato %1$s non è supportato.</string>
+
+    <string name="preference_resume_step_size_title">Riavvolgimento automatico</string>
+    <string name="preference_resume_step_size_text">Numero di secondi in cui la riproduzione viene riavvolta dopo la ripresa.</string>
+
+    <plurals name="preference_resume_step_size_dialog_title">
+        <item quantity="one">Dimensione passo: %d secondo</item>
+        <item quantity="other">Dimensione passo: %d secondi</item>
+    </plurals>
+
+    <string name="notification_sensitive_content_replacement">Contenuto nascosto</string>
+    <string name="downloader_notification_initialize">Initialize download</string>
+    <string name="preference_hide_media_on_lockscreen_title">Notifica privata</string>
+    <string name="preference_hide_media_on_lockscreen_text">Nascondi le informazioni sui media sulla schermata di blocco (dipende dalle impostazioni di privacy della schermata di blocco del tuo sistema).</string>
+
+    <string name="preference_artwork_use_local_images_title">Usa immagini degli album locali</string>
+    <string name="preference_artwork_use_local_images_text">Ignora le copertine degli album trovate nel Database multimediale di Android e utilizza invece immagini locali. Se non viene trovata alcuna immagine locale, verrà utilizzato il provider di copertine degli album selezionato.</string>
+
+    <string name="preference_npv_show_playlist_title">Avvia con la vista delle playlist</string>
+    <string name="preference_npv_show_playlist_text">Mostra la playlist se Odyssey viene aperto tramite widget o notifica mentre la riproduzione è attiva.</string>
+
+    <string name="preference_tracks_sort_order_title">Ordine di ordinamento delle tracce dell album</string>
+    <string name="preference_tracks_sort_order_summary">Seleziona l ordine di ordinamento per le tracce di un album.</string>
+
+    <string name="preference_album_tracks_sort_number">Numero della traccia</string>
+    <string name="preference_album_tracks_sort_name">Nome visualizzato (Nome del file)</string>
+
+    <string name="pop_menu_action_start_sleep_timer">Avvia timer di spegnimento</string>
+    <string name="pop_menu_action_cancel_sleep_timer">Annulla il timer di spegnimento</string>
+    <string name="action_npv_show_playlist">Mostra playlist</string>
+    <string name="action_npv_show_cover">Mostra copertina</string>
+    <string name="action_npv_more_options">Altre opzioni</string>
+    <string name="dialog_battery_opt_action_open_settings">Apri impostazioni</string>
+    <string name="dialog_sleep_timer">Imposta tempo di spegnimento</string>
+    <string name="dialog_sleep_timer_separator" translatable="false">:</string>
+    <string name="dialog_sleep_timer_action_start">Avvia</string>
+    <string name="dialog_sleep_timer_duration_minutes">Minuti</string>
+    <string name="dialog_sleep_timer_duration_seconds">Secondi</string>
+    <string name="dialog_sleep_timer_stop_after_current">Interrompi riproduzione dopo la canzone attualmente in riproduzione</string>
+    <string name="dialog_no_browser_found_title">Nessun browser disponibile</string>
+    <string name="dialog_no_browser_found_message">Il tuo dispositivo non ha un browser.</string>
+    <string name="dialog_battery_opt_title">Ottimizzazione batteria attiva</string>
+    <string name="dialog_battery_opt_message">
+    Lottimizzazione della batteria per Odyssey è attiva.
+    \n\nCiò impedirà a Odyssey di riprendere automaticamente la riproduzione dopo che la riproduzione in background è stata interrotta.
+    \n\nSi prega di considerare di disattivare questa opzione per garantire il corretto funzionamento di Odyssey.
+</string>
+    <string name="playlist_type_global">Globale</string>
+    <string name="playlist_type_local">Locale</string>
+
 </resources>
