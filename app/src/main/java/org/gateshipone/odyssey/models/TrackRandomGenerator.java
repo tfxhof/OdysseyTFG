@@ -26,7 +26,6 @@ package org.gateshipone.odyssey.models;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import org.gateshipone.odyssey.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -167,6 +166,7 @@ public class TrackRandomGenerator {
      *
      * @param tracks List of tracks
      */
+    @SuppressLint("NewApi")
     private synchronized void fillArtistsAlbumfromList(List<TrackModel> tracks) {
         LinkedHashMap<String, List<Integer>> hashMap = new LinkedHashMap<>();
         // Clear all entries
@@ -179,13 +179,9 @@ public class TrackRandomGenerator {
         // Iterate over the list and add all track position to their artist lists
         for (TrackModel track : tracks) {
             String albumName = track.getTrackAlbumName();
-            List<Integer> list = hashMap.get(albumName);
+            List<Integer> list = hashMap.computeIfAbsent(albumName,k-> new ArrayList<>());
 
-            if (list == null) {
-                // If artist is not already in HashMap add a new list for it
-                list = new ArrayList<>();
-                hashMap.put(albumName, list);
-            }
+
             // Add pair of position in original playlist and track itself to artists bucket list
             list.add(mOriginalList.indexOf(track));
 
@@ -425,19 +421,19 @@ public class TrackRandomGenerator {
         mIntelligenceFactor = factor;
     }
 
-    public ArrayList<List<Integer>> getmDataArtists() {
+    public List<List<Integer>> getmDataArtists() {
         return mDataArtists;
     }
 
-    public ArrayList<List<Integer>> getmDataAlbum() {
+    public List<List<Integer>> getmDataAlbum() {
         return mDataAlbum;
     }
 
-    public ArrayList<List<Integer>> getmDataAlbumTracks() {
+    public List<List<Integer>> getmDataAlbumTracks() {
         return mDataAlbumTracks;
     }
 
-    public ArrayList<List<Integer>> getmDataSelectedAlbumTracks() {
+    public List<List<Integer>> getmDataSelectedAlbumTracks() {
         return mDataSelectedAlbumTracks;
     }
 

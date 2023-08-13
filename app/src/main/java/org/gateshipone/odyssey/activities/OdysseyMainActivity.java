@@ -638,9 +638,53 @@ public class OdysseyMainActivity extends GenericActivity
     public void onAlbumSelected(AlbumModel album, Bitmap bitmap) {
         //personal
         //flag used to distinguish when to start playing the album automatically(only in save the album)
-        int flag = 0;
-        AlbumModel albumFinal = null;
+
+        AlbumModel albumFinal = checkIfSaveTheAlbum(album);
+
+        if (albumFinal!=null) {
+            // Create fragment and give it an argument for the selected article
+            AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            // set enter / exit animation
+            newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
+            newFragment.setExitTransition(new Slide(Gravity.TOP));
+            // Replace whatever is in the fragment_container view with this
+            // fragment,
+            // and add the transaction to the back stack so the user can navigate
+            // back
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack("AlbumTracksFragment");
+            // Commit the transaction
+            transaction.commit();
+            //IF we play save the album we want to start playing instantly, whereas
+            //if it is another album we dont want to star playing
+            //In order to do so we check that the final album is not the same as the input one
+            //if it is different is because it was save the album
+            if (!albumFinal.getAlbumName().equals(album.getAlbumName())) {
+                try {
+                    getPlaybackService().clearPlaylist();
+                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+                    getPlaybackService().togglePause();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Checks if the input is save the album and returns another album if so
+     * @param album
+     * @return an album
+     */
+    private AlbumModel checkIfSaveTheAlbum(AlbumModel album){
+        if(album == null){
+            return null;
+        }
         String albumName="Save the album";
+        AlbumModel albumFinal = null;
         if(album.getAlbumName().equals(albumName)){
             List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
             //delete save the album
@@ -659,43 +703,12 @@ public class OdysseyMainActivity extends GenericActivity
                         albumFinal = albumIterator;
                     }
                 }
-                flag = 1;
             }
-        } else {
+        } else{
             albumFinal = album;
         }
-        if (albumFinal!=null) {
-            // Create fragment and give it an argument for the selected article
-            AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            // set enter / exit animation
-            newFragment.setEnterTransition(new Slide(Gravity.BOTTOM));
-            newFragment.setExitTransition(new Slide(Gravity.TOP));
-
-            // Replace whatever is in the fragment_container view with this
-            // fragment,
-            // and add the transaction to the back stack so the user can navigate
-            // back
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack("AlbumTracksFragment");
-            // Commit the transaction
-            transaction.commit();
-
-            if (flag==1) {
-                try {
-                    getPlaybackService().clearPlaylist();
-                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
-                    getPlaybackService().togglePause();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
+        return albumFinal;
     }
-
     @Override
     public void onDirectorySelected(final String dirPath, final boolean isRootDirectory) {
         onDirectorySelected(dirPath, isRootDirectory, true);
