@@ -666,7 +666,7 @@ public class OdysseyMainActivity extends GenericActivity
                     getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
                     getPlaybackService().togglePause();
                 } catch (RemoteException e) {
-                    return;
+                    
                 }
             }
 
