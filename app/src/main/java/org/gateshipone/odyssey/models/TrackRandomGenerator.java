@@ -420,62 +420,53 @@ public class TrackRandomGenerator {
      * @return A random number of a track of the original track list
      */
     public synchronized int getRandomAlbumNumber() {
-        // Randomize if a more balanced (per artist) approach or a traditional approach should be used
-        boolean smartRandom = mRandomGenerator.getLimitedRandomNumber(100) < mIntelligenceFactor;
-        Log.d(TAG, Integer.toString(mIntelligenceFactor));
-        if (smartRandom) {
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Use smart random");
-            }
-            if (mDataAlbum.isEmpty()) {
-                // Refill list from original list
-                fillAlbumFromList(mOriginalListAlbum);
-            }
 
-            // First level random, get artist
-            int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataAlbum.size());
-
-            // Get artists bucket list to artist number
-            List<Integer> artistsAlbums;
-
-
-            // Get the list of albums belonging to the selected artist
-            artistsAlbums = mDataAlbum.get(randomArtistNumber);
-
-            // Check if an artist was found
-            if (artistsAlbums == null) {
-                return 0;
-            }
-
-            int randomAlbumNo = mRandomGenerator.getLimitedRandomNumber(artistsAlbums.size());
-
-            Integer albumNumber = artistsAlbums.get(randomAlbumNo);
-
-            // Remove album to prevent double plays
-            artistsAlbums.remove(randomAlbumNo);
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Tracks from artist left: " + artistsAlbums.size());
-            }
-
-            // Check if albums from this artist are left, otherwise remove the artist
-            if (artistsAlbums.isEmpty()) {
-                // No albums left from artist, remove from map
-                mDataAlbum.remove(randomArtistNumber);
-                if (BuildConfig.DEBUG) {
-                    Log.v(TAG, "Artists left: " + mDataAlbum.size());
-                }
-            }
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Selected artist no.: " + randomArtistNumber + " with internal track no.: " + randomAlbumNo + " and original track no.: " + albumNumber);
-            }
-            // Get random album number
-            return albumNumber;
-        } else {
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Use traditional random");
-            }
-            return mRandomGenerator.getLimitedRandomNumber(mOriginalListAlbum.size());
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Use smart random");
         }
+        if (mDataAlbum.isEmpty()) {
+            // Refill list from original list
+            fillAlbumFromList(mOriginalListAlbum);
+        }
+
+        // First level random, get artist
+        int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataAlbum.size());
+
+        // Get artists bucket list to artist number
+        List<Integer> artistsAlbums;
+
+
+        // Get the list of albums belonging to the selected artist
+        artistsAlbums = mDataAlbum.get(randomArtistNumber);
+
+        // Check if an artist was found
+        if (artistsAlbums == null) {
+            return 0;
+        }
+
+        int randomAlbumNo = mRandomGenerator.getLimitedRandomNumber(artistsAlbums.size());
+
+        Integer albumNumber = artistsAlbums.get(randomAlbumNo);
+
+        // Remove album to prevent double plays
+        artistsAlbums.remove(randomAlbumNo);
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Tracks from artist left: " + artistsAlbums.size());
+        }
+
+        // Check if albums from this artist are left, otherwise remove the artist
+        if (artistsAlbums.isEmpty()) {
+            // No albums left from artist, remove from map
+            mDataAlbum.remove(randomArtistNumber);
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, "Artists left: " + mDataAlbum.size());
+            }
+        }
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "Selected artist no.: " + randomArtistNumber + " with internal track no.: " + randomAlbumNo + " and original track no.: " + albumNumber);
+        }
+        // Get random album number
+        return albumNumber;
     }
 
     public void setEnabled(int factor) {

@@ -279,29 +279,7 @@ public class TrackRandomGeneratorTest {
         assertTrue(areAllElementsUnique(listNumber));
 
     }
-
-    @Test
-    public void getRandomAlbumNumberTraditionalRandom() {
-        List<Integer> listNumber = new ArrayList<Integer>();
-        //Make sure we use our random generator
-        randomGenerator.setEnabled(0);
-        randomGenerator.fillAlbumFromList(albums);
-        //We have generated 20 albums so we run it 20 times but in traditional we don't eliminate
-        for(int i=0; i<=19; i++) {
-            listNumber.add(randomGenerator.getRandomAlbumNumber());
-        }
-        int numAlbums= 0;
-        for(List<Integer> list : randomGenerator.getmDataAlbum() ) {
-            for(Integer i : list) {
-                numAlbums++;
-            }
-        }
-        assertEquals(numAlbums, 20);
-        //check that there are probably repetitions
-        assertFalse(areAllElementsUnique(listNumber));
-
-    }
-
+    
     private boolean areAllElementsUnique(List<Integer> array) {
         HashSet<Integer> uniqueSet = new HashSet<>();
 

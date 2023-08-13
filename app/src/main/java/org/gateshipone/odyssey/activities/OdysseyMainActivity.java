@@ -646,18 +646,22 @@ public class OdysseyMainActivity extends GenericActivity
             List<AlbumModel> allAlbums = MusicLibraryHelper.getAllAlbums(getApplicationContext());
             //delete save the album
             allAlbums.remove(0);
-            mTrackRandomGenerator.setEnabled(mIntelligenceFactor);
-            mTrackRandomGenerator.fillAlbumFromList(allAlbums);
-            int num;
-            AlbumModel albumIterator;
-            while(albumFinal== null) {
-                num = mTrackRandomGenerator.getRandomAlbumNumber();
-                albumIterator = allAlbums.get(num);
-                if(!albumIterator.getAlbumName().equals(albumName)){
-                    albumFinal = albumIterator;
+            if(allAlbums.size()>=1) {
+                mTrackRandomGenerator.setEnabled(mIntelligenceFactor);
+                if(mTrackRandomGenerator.getmDataAlbum().isEmpty()) {
+                    mTrackRandomGenerator.fillAlbumFromList(allAlbums);
                 }
+                int num;
+                AlbumModel albumIterator;
+                while (albumFinal == null) {
+                    num = mTrackRandomGenerator.getRandomAlbumNumber();
+                    albumIterator = allAlbums.get(num);
+                    if (!albumIterator.getAlbumName().equals(albumName)) {
+                        albumFinal = albumIterator;
+                    }
+                }
+                flag = 1;
             }
-            flag=1;
         } else {
             albumFinal = album;
         }
