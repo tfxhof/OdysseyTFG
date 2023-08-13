@@ -33,7 +33,6 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -666,7 +665,7 @@ public class OdysseyMainActivity extends GenericActivity
                     getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
                     getPlaybackService().togglePause();
                 } catch (RemoteException e) {
-                    
+                    e.printStackTrace();
                 }
             }
 
