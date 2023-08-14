@@ -202,7 +202,7 @@ public class TrackRandomGenerator {
         // Randomize if we randomize by artists or by album
         Integer songNumber;
 
-        if(mIntelligenceFactor == 50){
+        if(mIntelligenceFactor >= 40  && mIntelligenceFactor <= 60 ){
             //First randomize by artist then by album
 
             if (mDataArtists.isEmpty()) {
