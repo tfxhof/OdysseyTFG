@@ -25,6 +25,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -43,6 +45,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -100,6 +103,11 @@ import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.views.CurrentPlaylistView;
 import org.gateshipone.odyssey.views.NowPlayingView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class OdysseyMainActivity extends GenericActivity
@@ -270,6 +278,29 @@ public class OdysseyMainActivity extends GenericActivity
         // check if battery optimization is active
         checkBatteryOptimization();
 
+        //personal
+        //Add save the album image to sdcard
+        File externalFilesDir = getExternalFilesDir(null);
+
+        if (externalFilesDir != null) {
+            File imageFile = new File(externalFilesDir, "save_the_album.png");
+            try {
+                Resources resources = getResources();
+                InputStream inputStream = resources.openRawResource(resources.getIdentifier("icon_512", "drawable", getPackageName()));
+                FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+
+                fileOutputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                Log.e("MiApp", "Error ato load savethe alum image", e);
+            }
+        }
 
     }
 

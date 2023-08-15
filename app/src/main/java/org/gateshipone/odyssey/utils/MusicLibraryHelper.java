@@ -592,8 +592,9 @@ public class MusicLibraryHelper {
         //personal
         //We add this album manually due to the save the album functionality,this way we dont need
         //to create a fake track and artist and will hide it from th device storage
-        albums.add(0,new AlbumModel( "Save the album","", "a", 9999));
+        albums.add(0,new AlbumModel( "Save the album","/sdcard/Android/data/org.gateshipone.odyssey/files/save_the_album.png", "", 9999));
         return albums;
+        /// "res/drawable/"+R.drawable.fanart_tv_logo2
     }
 
     /**
