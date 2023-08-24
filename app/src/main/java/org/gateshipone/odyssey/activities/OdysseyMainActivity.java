@@ -94,7 +94,9 @@ import org.gateshipone.odyssey.listener.ToolbarAndFABCallback;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.models.PlaylistModel;
+import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
 import org.gateshipone.odyssey.utils.FileExplorerHelper;
 import org.gateshipone.odyssey.utils.FileUtils;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
@@ -108,6 +110,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OdysseyMainActivity extends GenericActivity
@@ -144,7 +147,7 @@ public class OdysseyMainActivity extends GenericActivity
     private Uri mSentUri;
 
     private boolean mShowNPV = false;
-
+    private OdysseyDatabaseManager mDatabaseManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean switchToSettings = false;
@@ -301,6 +304,16 @@ public class OdysseyMainActivity extends GenericActivity
                 Log.e("MiApp", "Error ato load savethe alum image", e);
             }
         }
+        //personal
+        List<TrackModel> tracksAll = MusicLibraryHelper.getAllTracks("",getApplicationContext());
+        List<TrackModel> tracksParty = new ArrayList<>();
+        mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
+        mTrackRandomGenerator.fillFromList(tracksAll);
+        mTrackRandomGenerator.setEnabled(50);
+        for(int i =0; i< 5; i++) {
+            tracksParty.add(tracksAll.get(mTrackRandomGenerator.getRandomTrackNumber()));
+        }
+        mDatabaseManager.savePlaylist("Party Mode",tracksParty);
 
     }
 
