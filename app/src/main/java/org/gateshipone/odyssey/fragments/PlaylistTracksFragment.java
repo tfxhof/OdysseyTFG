@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +48,9 @@ import org.gateshipone.odyssey.activities.GenericActivity;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
+import org.gateshipone.odyssey.models.TrackRandomGenerator;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
+import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
 import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.viewmodels.GenericViewModel;
@@ -75,7 +78,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      * Action to execute when the user selects an item in the list
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
-
+    private TrackRandomGenerator mTrackRandomGenerator;
     public static PlaylistTracksFragment newInstance(@NonNull final PlaylistModel playlistModel) {
         final Bundle args = new Bundle();
         args.putParcelable(ARG_PLAYLISTMODEL, playlistModel);
@@ -134,6 +137,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
         // setup observer for the live data
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
+        mTrackRandomGenerator = new TrackRandomGenerator();
     }
 
     @Override
@@ -175,6 +179,45 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(mPlaylistModel.getPlaylistName().equals("Party Mode")) {
+            try {
+                //We stop it to ensure proper state
+                ((GenericActivity) requireActivity()).getPlaybackService().togglePause();
+            } catch (RemoteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            int num = 0;
+            List<TrackModel> allDifferentTracks = MusicLibraryHelper.getAllTracks("",getContext());
+            if(!allDifferentTracks.isEmpty()){
+                //Used preference to know we are listening to aprty mode
+
+                /*SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("Party Mode", 1);
+                editor.apply();*/
+                List<TrackModel> currentTracks = OdysseyDatabaseManager.getInstance(getContext()).getTracksForPlaylist(mPlaylistModel.getPlaylistId());
+                //Equals is already done, to avoid repeating we remove the tracks that are already in
+                allDifferentTracks.removeAll(currentTracks);
+                mTrackRandomGenerator.setEnabled(50);
+                mTrackRandomGenerator.fillFromList(allDifferentTracks);
+
+                while(num <position) {
+
+                    //When we delete the track number updates itself
+                    removeTrackFromPlaylist(0);
+                    TrackModel el =currentTracks.remove(0);
+                    Log.d("pr","Eliminado: " + el.getTrackName()+ el.getTrackNumber());
+
+                    num++;
+                    //We randomize for artist and album
+                    currentTracks.add(allDifferentTracks.get(mTrackRandomGenerator.getRandomTrackNumber()));
+                }
+                addTracksToPlaylist(currentTracks);
+            }
+
+
+            position= 0;
+        }
         switch (mClickAction) {
             case ACTION_ADD_SONG:
                 enqueueTrack(position, false);
@@ -188,6 +231,18 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             case ACTION_CLEAR_AND_PLAY:
                 playPlaylist(position);
                 break;
+        }
+    }
+
+    /** to do personal
+     * add the selected track from the playlist in the mediastore.
+     */
+    private void addTracksToPlaylist(List<TrackModel> tracks) {
+
+        if (mPlaylistModel.getPlaylistType() == PlaylistModel.PLAYLIST_TYPES.ODYSSEY_LOCAL) {
+            OdysseyDatabaseManager.getInstance(getContext()).savePlaylist(mPlaylistModel.getPlaylistName(),tracks);
+            // reload data
+            refreshContent();
         }
     }
 

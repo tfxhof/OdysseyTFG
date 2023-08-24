@@ -304,6 +304,7 @@ public class OdysseyMainActivity extends GenericActivity
                 Log.e("MiApp", "Error ato load savethe alum image", e);
             }
         }
+
         //personal
         List<TrackModel> tracksAll = MusicLibraryHelper.getAllTracks("",getApplicationContext());
         List<TrackModel> tracksParty = new ArrayList<>();

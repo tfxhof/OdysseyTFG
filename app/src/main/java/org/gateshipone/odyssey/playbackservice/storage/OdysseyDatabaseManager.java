@@ -283,7 +283,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.endTransaction();
 
         // close the connection
-        odysseyDB.close();
+
     }
 
     /**
@@ -328,7 +328,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return playList;
     }
@@ -392,7 +392,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         stateCursor.close();
 
-        odysseyDB.close();
+
 
         return playList;
     }
@@ -426,7 +426,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return state;
     }
@@ -460,7 +460,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return state;
     }
@@ -503,7 +503,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
             bookmarkCursor.close();
         }
 
-        odysseyDB.close();
+
 
         return bookmarks;
     }
@@ -534,7 +534,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
+
     }
 
     /**
@@ -617,7 +617,6 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
     }
 
     /**
@@ -650,7 +649,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
+
 
         return result > 0;
     }
@@ -694,7 +693,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
             cursor.close();
         }
 
-        odysseyDB.close();
+
 
         return playlists;
     }
@@ -710,7 +709,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         final List<TrackModel> tracks = getTracksForPlaylist(playlistId, odysseyDB);
 
-        odysseyDB.close();
+
 
         return tracks;
     }
@@ -767,9 +766,8 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
 
-        return result > 0;
+        return result > 0; //strict
     }
 
     /**
