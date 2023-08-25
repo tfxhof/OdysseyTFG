@@ -13,6 +13,7 @@ This whole project is licensed under the **GPLv3 or later** license (see LICENSE
 ## Overview ##
 Odyssey Music Player is built with a clear objective in mind: to offer a seamless music playback experience, especially suited for use while driving. The primary focus of this project is to provide a music player that's not only fast and efficient, but also adheres closely to the principles of Material Design Guidelines.
 
+The orignal creator of the application is [Odyssey](https://github.com/gateship-one/odyssey). This version of the app aims to simplify and adapt the application for the car without sacrificing the original aesthetics and optimization.
 ## Key Features ##
 Efficient Music Library: Odyssey is tailored to handle even the most extensive music libraries without sacrificing speed or performance. Navigate through your artists, albums, tracks and playlists effortssly.
 
