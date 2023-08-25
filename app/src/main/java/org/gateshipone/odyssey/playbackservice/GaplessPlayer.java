@@ -645,8 +645,8 @@ public class GaplessPlayer {
                 }
 
                 int audioSessionID = mp.getAudioSessionId();
-                Toast.makeText(mPlaybackService.getApplicationContext(), "¡Canción finalizada!", Toast.LENGTH_SHORT).show();
-                checkPartyModeAndRefill();
+                //Toast.makeText(mPlaybackService.getApplicationContext(), "¡Canción finalizada!", Toast.LENGTH_SHORT).show();
+                //checkPartyModeAndRefill();
                 // Release old MediaPlayer
                 mp.release();
 
@@ -690,6 +690,7 @@ public class GaplessPlayer {
             }
         }
         //personal
+        /*
         private void checkPartyModeAndRefill(){
 
             //Preferences
@@ -714,7 +715,7 @@ public class GaplessPlayer {
                 }
 
             }
-        }
+        }*/
 
     }
 

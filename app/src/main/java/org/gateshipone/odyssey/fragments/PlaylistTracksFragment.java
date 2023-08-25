@@ -49,7 +49,6 @@ import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.activities.GenericActivity;
-import org.gateshipone.odyssey.activities.OdysseyMainActivity;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
@@ -90,7 +89,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
     private TrackRandomGenerator mTrackRandomGenerator;
-    private OdysseyMainActivity mainActivity;
     private View view;
 
     public static PlaylistTracksFragment newInstance(@NonNull final PlaylistModel playlistModel) {
@@ -478,4 +476,5 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             getParentFragmentManager().setFragmentResult(TRACK_REMOVED_KEY, result);
         }
     }
+
 }
