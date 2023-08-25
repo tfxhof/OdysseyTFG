@@ -45,7 +45,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -106,7 +106,6 @@ import org.gateshipone.odyssey.views.CurrentPlaylistView;
 import org.gateshipone.odyssey.views.NowPlayingView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -301,7 +300,7 @@ public class OdysseyMainActivity extends GenericActivity
                 fileOutputStream.close();
                 inputStream.close();
             } catch (IOException e) {
-                Log.e("MiApp", "Error ato load savethe alum image", e);
+                Log.e("MiApp", "Error ato load save the alum image", e);
             }
         }
 
@@ -869,9 +868,9 @@ public class OdysseyMainActivity extends GenericActivity
         // back
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.addToBackStack("PlaylistTracksFragment");
-
         // Commit the transaction
         transaction.commit();
+
     }
 
     private void requestPermissionExternalStorage() {

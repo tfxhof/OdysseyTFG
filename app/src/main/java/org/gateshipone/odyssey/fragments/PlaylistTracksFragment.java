@@ -22,6 +22,9 @@
 
 package org.gateshipone.odyssey.fragments;
 
+
+import static java.lang.Thread.sleep;
+
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -45,17 +48,25 @@ import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.activities.GenericActivity;
+import org.gateshipone.odyssey.activities.OdysseyMainActivity;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.IOdysseyPlaybackService;
+import org.gateshipone.odyssey.playbackservice.NowPlayingInformation;
+import org.gateshipone.odyssey.playbackservice.PlaybackService;
+import org.gateshipone.odyssey.playbackservice.PlaybackServiceConnection;
+import org.gateshipone.odyssey.playbackservice.managers.PlaybackServiceStatusHelper;
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
 import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.PlaylistTrackViewModel;
+import org.gateshipone.odyssey.views.NowPlayingView;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implements AdapterView.OnItemClickListener {
@@ -75,10 +86,14 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
     private PlaylistModel mPlaylistModel;
 
     /**
-     * Action to execute when the user selects an item in the list
+     * Action to execute when the user selects an item in the list repeat
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
     private TrackRandomGenerator mTrackRandomGenerator;
+    //private PlaybackServiceConnection mServiceConnection;
+    private OdysseyMainActivity mainActivity;
+    private View view;
+
     public static PlaylistTracksFragment newInstance(@NonNull final PlaylistModel playlistModel) {
         final Bundle args = new Bundle();
         args.putParcelable(ARG_PLAYLISTMODEL, playlistModel);
@@ -90,7 +105,8 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_refresh, container, false);
+        view=inflater.inflate(R.layout.list_refresh, container, false);
+        return view;
     }
 
     @Override
@@ -138,6 +154,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
         // setup observer for the live data
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
         mTrackRandomGenerator = new TrackRandomGenerator();
+
     }
 
     @Override
@@ -179,7 +196,8 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(mPlaylistModel.getPlaylistName().equals("Party Mode")) {
+        boolean isParty = mPlaylistModel.getPlaylistName().equals("Party Mode");
+        if(isParty) {
             try {
                 //We stop it to ensure proper state
                 ((GenericActivity) requireActivity()).getPlaybackService().togglePause();
@@ -206,8 +224,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                     //When we delete the track number updates itself
                     removeTrackFromPlaylist(0);
                     TrackModel el =currentTracks.remove(0);
-                    Log.d("pr","Eliminado: " + el.getTrackName()+ el.getTrackNumber());
-
                     num++;
                     //We randomize for artist and album
                     currentTracks.add(allDifferentTracks.get(mTrackRandomGenerator.getRandomTrackNumber()));
@@ -215,8 +231,8 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                 addTracksToPlaylist(currentTracks);
             }
 
-
             position= 0;
+
         }
         switch (mClickAction) {
             case ACTION_ADD_SONG:
@@ -232,6 +248,41 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                 playPlaylist(position);
                 break;
         }
+        if(isParty) {
+            try {
+                sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            IOdysseyPlaybackService pbs = null;
+
+            try {
+
+                pbs = ((GenericActivity) requireActivity()).getPlaybackService();
+            } catch (RemoteException e) {
+
+                e.printStackTrace();
+            }
+            try {
+                if (pbs != null) {
+                    NowPlayingInformation np;
+                    np = pbs.getNowPlayingInformation();
+                    if (np != null) {
+                        while (!np.getRepeat().equals(PlaybackService.REPEATSTATE.REPEAT_ALL)) {
+                            pbs.toggleRepeat();
+                            np = pbs.getNowPlayingInformation();
+                        }
+
+                        Log.d("Personal", "2+ dsnfikhjsdf" + np);
+                        NowPlayingView nowPlayingView = requireActivity().findViewById(R.id.now_playing_layout);
+                        nowPlayingView.updateStatus(pbs.getNowPlayingInformation());
+                    }
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /** to do personal
@@ -260,6 +311,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             menu.findItem(R.id.fragment_playlist_tracks_action_remove).setVisible(false);
         }
     }
+
 
     /**
      * Hook called when an menu item in the context menu is selected.

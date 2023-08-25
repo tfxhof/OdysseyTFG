@@ -1103,7 +1103,7 @@ public class NowPlayingView extends RelativeLayout implements SeekBar.OnSeekBarC
      *
      * @param info the new pbs states including the current track
      */
-    private void updateStatus(NowPlayingInformation info) {
+    public void updateStatus(NowPlayingInformation info) {
 
         // If called without a nowplayinginformation, ask the PBS directly for the information.
         // After the establishing of the service connection it can be that a track is playing and we've not yet received the NowPlayingInformation
