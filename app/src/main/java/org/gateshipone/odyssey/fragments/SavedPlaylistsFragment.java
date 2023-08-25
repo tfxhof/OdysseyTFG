@@ -235,19 +235,22 @@ public class SavedPlaylistsFragment extends OdysseyFragment<PlaylistModel> imple
      * @param position the position of the selected playlist in the adapter
      */
     private void deletePlaylist(final int position) {
-        // identify current playlist
-        final PlaylistModel clickedPlaylist = mAdapter.getItem(position);
 
-        // delete current playlist
-        boolean reloadData = false;
+            // identify current playlist
+            final PlaylistModel clickedPlaylist = mAdapter.getItem(position);
 
-        if (clickedPlaylist.getPlaylistType() == PlaylistModel.PLAYLIST_TYPES.ODYSSEY_LOCAL) {
-            reloadData = OdysseyDatabaseManager.getInstance(getContext()).removePlaylist(clickedPlaylist.getPlaylistId());
-        }
+            // delete current playlist
+            boolean reloadData = false;
 
-        if (reloadData) {
-            // reload data
-            refreshContent();
-        }
+            if (clickedPlaylist.getPlaylistType() == PlaylistModel.PLAYLIST_TYPES.ODYSSEY_LOCAL) {
+                reloadData = OdysseyDatabaseManager.getInstance(getContext()).removePlaylist(clickedPlaylist.getPlaylistId());
+            }
+
+            if (reloadData) {
+                // reload data
+                refreshContent();
+            }
+
     }
+
 }

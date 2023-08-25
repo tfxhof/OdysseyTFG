@@ -23,17 +23,26 @@
 package org.gateshipone.odyssey.playbackservice;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import org.gateshipone.odyssey.BuildConfig;
+import org.gateshipone.odyssey.models.TrackModel;
+import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
+import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
@@ -619,7 +628,8 @@ public class GaplessPlayer {
      * This listener will handle callbacks when a track finishes playback
      */
     private class TrackCompletionListener implements MediaPlayer.OnCompletionListener {
-
+        OdysseyDatabaseManager mDatabaseManager = OdysseyDatabaseManager.getInstance(mPlaybackService.getApplicationContext());
+        TrackRandomGenerator mTrackRandomGenerator = new TrackRandomGenerator();
         @Override
         public void onCompletion(MediaPlayer mp) {
             // Sequentially execute all critical operations on the MP objects
@@ -635,7 +645,8 @@ public class GaplessPlayer {
                 }
 
                 int audioSessionID = mp.getAudioSessionId();
-
+                Toast.makeText(mPlaybackService.getApplicationContext(), "¡Canción finalizada!", Toast.LENGTH_SHORT).show();
+                checkPartyModeAndRefill();
                 // Release old MediaPlayer
                 mp.release();
 
@@ -678,6 +689,33 @@ public class GaplessPlayer {
                 }
             }
         }
+        //personal
+        private void checkPartyModeAndRefill(){
+
+            //Preferences
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mPlaybackService.getApplicationContext());
+            if(sharedPreferences.getInt("Party Mode",0) == 1){
+                int num = 0;
+                List<TrackModel> allDifferentTracks = MusicLibraryHelper.getAllTracks("",mPlaybackService.getApplicationContext());
+                if(!allDifferentTracks.isEmpty()) {
+                    List<TrackModel> currentTracks = new ArrayList<>();
+                    //Equals is already done, to avoid repeating we remove the tracks that are already in
+                    List<TrackModel> tracks =mDatabaseManager.getTracksForPlaylist(1);
+                    allDifferentTracks.removeAll(tracks);
+
+                    mTrackRandomGenerator.setEnabled(50);
+                    mTrackRandomGenerator.fillFromList(allDifferentTracks);
+                    while (num < 20 ) {
+                        num++;
+                        //We randomize for artist and album
+                        currentTracks.add(allDifferentTracks.get(mTrackRandomGenerator.getRandomTrackNumber()));
+                    }
+                    mDatabaseManager.savePlaylist("Party Mode", currentTracks);
+                }
+
+            }
+        }
+
     }
 
 

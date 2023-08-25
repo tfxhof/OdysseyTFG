@@ -577,6 +577,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         values.put(PlaylistsTable.COLUMN_TITLE, playlistName);
         values.put(PlaylistsTable.COLUMN_TRACKS, tracks.size());
         if (playlistId != -1) {
+
             values.put(PlaylistsTable.COLUMN_ID, playlistId);
         }
 
@@ -713,7 +714,6 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         return tracks;
     }
-
     /**
      * Method to remove a track from an already existing playlist
      *

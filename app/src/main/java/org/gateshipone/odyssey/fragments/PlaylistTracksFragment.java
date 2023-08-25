@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
+
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -56,8 +57,7 @@ import org.gateshipone.odyssey.models.TrackRandomGenerator;
 import org.gateshipone.odyssey.playbackservice.IOdysseyPlaybackService;
 import org.gateshipone.odyssey.playbackservice.NowPlayingInformation;
 import org.gateshipone.odyssey.playbackservice.PlaybackService;
-import org.gateshipone.odyssey.playbackservice.PlaybackServiceConnection;
-import org.gateshipone.odyssey.playbackservice.managers.PlaybackServiceStatusHelper;
+
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
@@ -66,7 +66,7 @@ import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.PlaylistTrackViewModel;
 import org.gateshipone.odyssey.views.NowPlayingView;
 
-import java.lang.reflect.Array;
+
 import java.util.List;
 
 public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implements AdapterView.OnItemClickListener {
@@ -90,7 +90,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
     private TrackRandomGenerator mTrackRandomGenerator;
-    //private PlaybackServiceConnection mServiceConnection;
     private OdysseyMainActivity mainActivity;
     private View view;
 
@@ -196,6 +195,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
         boolean isParty = mPlaylistModel.getPlaylistName().equals("Party Mode");
         if(isParty) {
             try {
@@ -208,17 +208,20 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             int num = 0;
             List<TrackModel> allDifferentTracks = MusicLibraryHelper.getAllTracks("",getContext());
             if(!allDifferentTracks.isEmpty()){
-                //Used preference to know we are listening to aprty mode
-
-                /*SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt("Party Mode", 1);
-                editor.apply();*/
                 List<TrackModel> currentTracks = OdysseyDatabaseManager.getInstance(getContext()).getTracksForPlaylist(mPlaylistModel.getPlaylistId());
+                Log.d("iden","ss" + Long.toString(mPlaylistModel.getPlaylistId()));
                 //Equals is already done, to avoid repeating we remove the tracks that are already in
-                allDifferentTracks.removeAll(currentTracks);
+                if(currentTracks.size() >=40){
+                    //if we have less than 40 tracks is better to take all into account or else we might found
+                    // that we have 22 and the next refill will be only 2 songs repeated 10 times each
+                    allDifferentTracks.removeAll(currentTracks);
+                }
+
                 mTrackRandomGenerator.setEnabled(50);
                 mTrackRandomGenerator.fillFromList(allDifferentTracks);
-
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("Party Mode", 1);
+                editor.apply();
                 while(num <position) {
 
                     //When we delete the track number updates itself
@@ -233,6 +236,10 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
             position= 0;
 
+        } else {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("Party Mode", 0);
+            editor.apply();
         }
         switch (mClickAction) {
             case ACTION_ADD_SONG:
@@ -272,8 +279,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                             pbs.toggleRepeat();
                             np = pbs.getNowPlayingInformation();
                         }
-
-                        Log.d("Personal", "2+ dsnfikhjsdf" + np);
                         NowPlayingView nowPlayingView = requireActivity().findViewById(R.id.now_playing_layout);
                         nowPlayingView.updateStatus(pbs.getNowPlayingInformation());
                     }

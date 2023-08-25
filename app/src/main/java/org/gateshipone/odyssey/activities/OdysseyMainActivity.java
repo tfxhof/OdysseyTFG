@@ -306,16 +306,16 @@ public class OdysseyMainActivity extends GenericActivity
 
         //personal
         List<TrackModel> tracksAll = MusicLibraryHelper.getAllTracks("",getApplicationContext());
-        List<TrackModel> tracksParty = new ArrayList<>();
-        mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
-        mTrackRandomGenerator.fillFromList(tracksAll);
-        mTrackRandomGenerator.setEnabled(50);
-        int maxSize = tracksAll.size() > 20 ? 20 : tracksAll.size();
-        for(int i =0; i< maxSize; i++) {
-            tracksParty.add(tracksAll.get(mTrackRandomGenerator.getRandomTrackNumber()));
+        if (tracksAll.size() >0) {
+            List<TrackModel> tracksParty = new ArrayList<>();
+            mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
+            mTrackRandomGenerator.fillFromList(tracksAll);
+            mTrackRandomGenerator.setEnabled(50);
+            for (int i = 0; i < 20; i++) {
+                tracksParty.add(tracksAll.get(mTrackRandomGenerator.getRandomTrackNumber()));
+            }
+            mDatabaseManager.savePlaylist("Party Mode", tracksParty);
         }
-        mDatabaseManager.savePlaylist("Party Mode",tracksParty);
-
     }
 
     @Override
