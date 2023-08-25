@@ -300,7 +300,7 @@ public class OdysseyMainActivity extends GenericActivity
                 fileOutputStream.close();
                 inputStream.close();
             } catch (IOException e) {
-                Log.e("MiApp", "Error ato load save the alum image", e);
+                Log.e("MiApp", "Error, cannot load save the alum image", e);
             }
         }
 
@@ -310,7 +310,8 @@ public class OdysseyMainActivity extends GenericActivity
         mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
         mTrackRandomGenerator.fillFromList(tracksAll);
         mTrackRandomGenerator.setEnabled(50);
-        for(int i =0; i< 5; i++) {
+        int maxSize = tracksAll.size() > 20 ? 20 : tracksAll.size();
+        for(int i =0; i< maxSize; i++) {
             tracksParty.add(tracksAll.get(mTrackRandomGenerator.getRandomTrackNumber()));
         }
         mDatabaseManager.savePlaylist("Party Mode",tracksParty);
