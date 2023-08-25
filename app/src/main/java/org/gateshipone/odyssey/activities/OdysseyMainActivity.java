@@ -679,10 +679,7 @@ public class OdysseyMainActivity extends GenericActivity
     @Override
     public void onAlbumSelected(AlbumModel album, Bitmap bitmap) {
         //personal
-        //flag used to distinguish when to start playing the album automatically(only in save the album)
-
         AlbumModel albumFinal = checkIfSaveTheAlbum(album);
-
         if (albumFinal!=null) {
             // Create fragment and give it an argument for the selected article
             AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
@@ -699,20 +696,14 @@ public class OdysseyMainActivity extends GenericActivity
             transaction.addToBackStack("AlbumTracksFragment");
             // Commit the transaction
             transaction.commit();
-            //IF we play save the album we want to start playing instantly, whereas
-            //if it is another album we dont want to star playing
-            //In order to do so we check that the final album is not the same as the input one
-            //if it is different is because it was save the album
-            if (!albumFinal.getAlbumName().equals(album.getAlbumName())) {
-                try {
-                    getPlaybackService().clearPlaylist();
-                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
-                    getPlaybackService().togglePause();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
+        }
+        //Start playing the album
+        try {
+            getPlaybackService().clearPlaylist();
+            getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+            getPlaybackService().togglePause();
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -957,7 +948,7 @@ public class OdysseyMainActivity extends GenericActivity
         newFragment.setEnterTransition(new Slide(GravityCompat.getAbsoluteGravity(GravityCompat.START, layoutDirection)));
         newFragment.setExitTransition(new Slide(GravityCompat.getAbsoluteGravity(GravityCompat.END, layoutDirection)));
 
-        transaction.addToBackStack("ArtworkSettingsFragment");
+        transaction.addToBackStack("ArtworkSettingsFragment"); //save the
 
         transaction.replace(R.id.fragment_container, newFragment);
 
