@@ -202,56 +202,9 @@ public class TrackRandomGenerator {
         // Randomize if we randomize by artists or by album
         Integer songNumber;
 
-        if(mIntelligenceFactor == 50){
-            //First randomize by artist then by album
-
-            if (mDataArtists.isEmpty()) {
-                // Refill list from original list
-                fillFromList(mOriginalList);
-            }
-
-            // First level random, get artist
-            int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataArtists.size());
-
-            // Get artists bucket list to artist number
-            List<Integer> artistsTracks;
-
-            // Get the list of tracks belonging to the selected artist
-            artistsTracks = mDataArtists.get(randomArtistNumber);
-            List<TrackModel> tracks = new ArrayList<>();
-            for(Integer i:artistsTracks) {
-               tracks.add( mOriginalList.get(i));
-            }
-            //Divide all the albums from the artist
-            fillArtistsAlbumfromList(tracks);
-
-            //Select a random album
-            int randomAlbumNumber = mRandomGenerator.getLimitedRandomNumber(mDataSelectedAlbumTracks.size());
-            // Get a random album bucket list
-            List<Integer> albumTracks = mDataSelectedAlbumTracks.get(randomAlbumNumber);
-
-            // Check if an album was found
-            if (albumTracks == null) {
-                return 0;
-            }
-            //get random track
-            int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(albumTracks.size());
-
-            songNumber = albumTracks.get(randomTrackNo);
-
-            // Remove track to prevent double plays
-            //first we save it to remove it from the artistsTracks cause there it has another order
-            artistsTracks.remove(albumTracks.get(randomTrackNo));
-            albumTracks.remove(randomTrackNo);
-
-            // Check if tracks from this artist are left, otherwise remove the artist
-            if (artistsTracks.isEmpty()) {
-                // No tracks left from artist, remove from map
-                mDataArtists.remove(randomArtistNumber);
-
-            }
-
-         }else if(mIntelligenceFactor == 100){
+        if(mIntelligenceFactor >= 40  && mIntelligenceFactor <= 60 ){
+            songNumber = randomizeByArtistAndAlbum();
+        }else if(mIntelligenceFactor == 100){
             //Randomize only by artist
             songNumber = getArtistSongNumber();
 
@@ -268,6 +221,58 @@ public class TrackRandomGenerator {
                 //randomize only by album
                 songNumber = getAlbumSongNumber();
             }
+        }
+        return songNumber;
+    }
+
+    private int randomizeByArtistAndAlbum(){
+        int songNumber;
+        //First randomize by artist then by album
+
+        if (mDataArtists.isEmpty()) {
+            // Refill list from original list
+            fillFromList(mOriginalList);
+        }
+
+        // First level random, get artist
+        int randomArtistNumber = mRandomGenerator.getLimitedRandomNumber(mDataArtists.size());
+
+        // Get artists bucket list to artist number
+        List<Integer> artistsTracks;
+
+        // Get the list of tracks belonging to the selected artist
+        artistsTracks = mDataArtists.get(randomArtistNumber);
+        List<TrackModel> tracks = new ArrayList<>();
+        for(Integer i:artistsTracks) {
+            tracks.add( mOriginalList.get(i));
+        }
+        //Divide all the albums from the artist
+        fillArtistsAlbumfromList(tracks);
+
+        //Select a random album
+        int randomAlbumNumber = mRandomGenerator.getLimitedRandomNumber(mDataSelectedAlbumTracks.size());
+        // Get a random album bucket list
+        List<Integer> albumTracks = mDataSelectedAlbumTracks.get(randomAlbumNumber);
+
+        // Check if an album was found
+        if (albumTracks == null) {
+            return 0;
+        }
+        //get random track
+        int randomTrackNo = mRandomGenerator.getLimitedRandomNumber(albumTracks.size());
+
+        songNumber = albumTracks.get(randomTrackNo);
+
+        // Remove track to prevent double plays
+        //first we save it to remove it from the artistsTracks cause there it has another order
+        artistsTracks.remove(albumTracks.get(randomTrackNo));
+        albumTracks.remove(randomTrackNo);
+
+        // Check if tracks from this artist are left, otherwise remove the artist
+        if (artistsTracks.isEmpty()) {
+            // No tracks left from artist, remove from map
+            mDataArtists.remove(randomArtistNumber);
+
         }
         return songNumber;
     }

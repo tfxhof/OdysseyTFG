@@ -25,6 +25,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -43,6 +45,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -91,7 +94,9 @@ import org.gateshipone.odyssey.listener.ToolbarAndFABCallback;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.models.PlaylistModel;
+import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
 import org.gateshipone.odyssey.utils.FileExplorerHelper;
 import org.gateshipone.odyssey.utils.FileUtils;
 import org.gateshipone.odyssey.utils.MusicLibraryHelper;
@@ -100,6 +105,11 @@ import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.views.CurrentPlaylistView;
 import org.gateshipone.odyssey.views.NowPlayingView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OdysseyMainActivity extends GenericActivity
@@ -139,6 +149,7 @@ public class OdysseyMainActivity extends GenericActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        OdysseyDatabaseManager mDatabaseManager;
         boolean switchToSettings = false;
         //personal
         mTrackRandomGenerator = new TrackRandomGenerator();
@@ -270,7 +281,39 @@ public class OdysseyMainActivity extends GenericActivity
         // check if battery optimization is active
         checkBatteryOptimization();
 
+        //personal
+        //Add save the album image to sdcard
+        File externalFilesDir = getExternalFilesDir(null);
 
+        if (externalFilesDir != null) {
+            File imageFile = new File(externalFilesDir, "save_the_album.png");
+            Resources resources = getResources();
+            try (InputStream inputStream = resources.openRawResource(resources.getIdentifier("icon_512", "drawable", getPackageName()));
+                 FileOutputStream fileOutputStream = new FileOutputStream(imageFile);){
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+
+            } catch (IOException e) {
+                Log.e("MiApp", "Error, cannot load save the alum image", e);
+            }
+        }
+
+        //personal
+        List<TrackModel> tracksAll = MusicLibraryHelper.getAllTracks("",getApplicationContext());
+        if (!tracksAll.isEmpty()) {
+            List<TrackModel> tracksParty = new ArrayList<>();
+            mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
+            mTrackRandomGenerator.fillFromList(tracksAll);
+            mTrackRandomGenerator.setEnabled(50);
+            for (int i = 0; i < 20; i++) {
+                tracksParty.add(tracksAll.get(mTrackRandomGenerator.getRandomTrackNumber()));
+            }
+            mDatabaseManager.savePlaylist("Party Mode", tracksParty);
+        }
     }
 
     @Override
@@ -635,10 +678,7 @@ public class OdysseyMainActivity extends GenericActivity
     @Override
     public void onAlbumSelected(AlbumModel album, Bitmap bitmap) {
         //personal
-        //flag used to distinguish when to start playing the album automatically(only in save the album)
-
         AlbumModel albumFinal = checkIfSaveTheAlbum(album);
-
         if (albumFinal!=null) {
             // Create fragment and give it an argument for the selected article
             AlbumTracksFragment newFragment = AlbumTracksFragment.newInstance(albumFinal, bitmap);
@@ -655,21 +695,16 @@ public class OdysseyMainActivity extends GenericActivity
             transaction.addToBackStack("AlbumTracksFragment");
             // Commit the transaction
             transaction.commit();
-            //IF we play save the album we want to start playing instantly, whereas
-            //if it is another album we dont want to star playing
-            //In order to do so we check that the final album is not the same as the input one
-            //if it is different is because it was save the album
-            if (!albumFinal.getAlbumName().equals(album.getAlbumName())) {
-                try {
-                    getPlaybackService().clearPlaylist();
-                    getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
-                    getPlaybackService().togglePause();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            //Start playing the album
+            try {
+                getPlaybackService().clearPlaylist();
+                getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+                getPlaybackService().togglePause();
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
-
         }
+
     }
 
     /**
@@ -824,9 +859,9 @@ public class OdysseyMainActivity extends GenericActivity
         // back
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.addToBackStack("PlaylistTracksFragment");
-
         // Commit the transaction
         transaction.commit();
+
     }
 
     private void requestPermissionExternalStorage() {
@@ -913,7 +948,7 @@ public class OdysseyMainActivity extends GenericActivity
         newFragment.setEnterTransition(new Slide(GravityCompat.getAbsoluteGravity(GravityCompat.START, layoutDirection)));
         newFragment.setExitTransition(new Slide(GravityCompat.getAbsoluteGravity(GravityCompat.END, layoutDirection)));
 
-        transaction.addToBackStack("ArtworkSettingsFragment");
+        transaction.addToBackStack("ArtworkSettingsFragment"); //save the
 
         transaction.replace(R.id.fragment_container, newFragment);
 

@@ -22,10 +22,15 @@
 
 package org.gateshipone.odyssey.fragments;
 
+
+import static java.lang.Thread.sleep;
+
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
+
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,11 +52,19 @@ import org.gateshipone.odyssey.activities.GenericActivity;
 import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
+import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.IOdysseyPlaybackService;
+import org.gateshipone.odyssey.playbackservice.NowPlayingInformation;
+import org.gateshipone.odyssey.playbackservice.PlaybackService;
+
 import org.gateshipone.odyssey.playbackservice.storage.OdysseyDatabaseManager;
+import org.gateshipone.odyssey.utils.MusicLibraryHelper;
 import org.gateshipone.odyssey.utils.PreferenceHelper;
 import org.gateshipone.odyssey.utils.ThemeUtils;
 import org.gateshipone.odyssey.viewmodels.GenericViewModel;
 import org.gateshipone.odyssey.viewmodels.PlaylistTrackViewModel;
+import org.gateshipone.odyssey.views.NowPlayingView;
+
 
 import java.util.List;
 
@@ -72,9 +85,11 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
     private PlaylistModel mPlaylistModel;
 
     /**
-     * Action to execute when the user selects an item in the list
+     * Action to execute when the user selects an item in the list repeat
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
+    private TrackRandomGenerator mTrackRandomGenerator;
+
 
     public static PlaylistTracksFragment newInstance(@NonNull final PlaylistModel playlistModel) {
         final Bundle args = new Bundle();
@@ -87,6 +102,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.list_refresh, container, false);
     }
 
@@ -134,6 +150,8 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
         // setup observer for the live data
         getViewModel().getData().observe(getViewLifecycleOwner(), this::onDataReady);
+        mTrackRandomGenerator = new TrackRandomGenerator();
+
     }
 
     @Override
@@ -175,6 +193,44 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        boolean isParty = mPlaylistModel.getPlaylistName().equals("Party Mode");
+        if(isParty) {
+            try {
+                //We stop it to ensure proper state
+                ((GenericActivity) requireActivity()).getPlaybackService().togglePause();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            int num = 0;
+            List<TrackModel> allDifferentTracks = MusicLibraryHelper.getAllTracks("",getContext());
+            if(!allDifferentTracks.isEmpty()){
+                List<TrackModel> currentTracks = OdysseyDatabaseManager.getInstance(getContext()).getTracksForPlaylist(mPlaylistModel.getPlaylistId());
+                Log.d("iden","ss" + Long.toString(mPlaylistModel.getPlaylistId()));
+                //Equals is already done, to avoid repeating we remove the tracks that are already in
+                if(currentTracks.size() >=40){
+                    //if we have less than 40 tracks is better to take all into account or else we might found
+                    // that we have 22 and the next refill will be only 2 songs repeated 10 times each
+                    allDifferentTracks.removeAll(currentTracks);
+                }
+
+                mTrackRandomGenerator.setEnabled(50);
+                mTrackRandomGenerator.fillFromList(allDifferentTracks);
+
+                while(num <position) {
+
+                    //When we delete the track number updates itself
+                    removeTrackFromPlaylist(0);
+                    currentTracks.remove(0);
+                    num++;
+                    //We randomize for artist and album
+                    currentTracks.add(allDifferentTracks.get(mTrackRandomGenerator.getRandomTrackNumber()));
+                }
+                addTracksToPlaylist(currentTracks);
+            }
+
+            position= 0;
+
+        }
         switch (mClickAction) {
             case ACTION_ADD_SONG:
                 enqueueTrack(position, false);
@@ -188,6 +244,52 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             case ACTION_CLEAR_AND_PLAY:
                 playPlaylist(position);
                 break;
+        }
+        activateRepeat(isParty);
+    }
+
+    private void activateRepeat(boolean isParty) {
+        if(isParty) {
+            try {
+                sleep(150);
+            } catch (InterruptedException e) {
+                Log.e("Sleep","Repeat sleep faield");
+                Thread.currentThread().interrupt();
+            }
+            IOdysseyPlaybackService pbs = null;
+
+            try {
+
+                pbs = ((GenericActivity) requireActivity()).getPlaybackService();
+                if (pbs != null) {
+                    NowPlayingInformation np;
+                    np = pbs.getNowPlayingInformation();
+                    if (np != null) {
+                        while (!np.getRepeat().equals(PlaybackService.REPEATSTATE.REPEAT_ALL)) {
+                            pbs.toggleRepeat();
+                            np = pbs.getNowPlayingInformation();
+                        }
+                        NowPlayingView nowPlayingView = requireActivity().findViewById(R.id.now_playing_layout);
+                        nowPlayingView.updateStatus(pbs.getNowPlayingInformation());
+                        refreshContent();
+                    }
+                }
+            } catch (RemoteException e) {
+
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /** to do personal
+     * add the selected track from the playlist in the mediastore.
+     */
+    private void addTracksToPlaylist(List<TrackModel> tracks) {
+
+        if (mPlaylistModel.getPlaylistType() == PlaylistModel.PLAYLIST_TYPES.ODYSSEY_LOCAL) {
+            OdysseyDatabaseManager.getInstance(getContext()).savePlaylist(mPlaylistModel.getPlaylistName(),tracks);
+            // reload data
+            refreshContent();
         }
     }
 
@@ -205,6 +307,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             menu.findItem(R.id.fragment_playlist_tracks_action_remove).setVisible(false);
         }
     }
+
 
     /**
      * Hook called when an menu item in the context menu is selected.
@@ -366,4 +469,5 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             getParentFragmentManager().setFragmentResult(TRACK_REMOVED_KEY, result);
         }
     }
+
 }

@@ -1,8 +1,8 @@
-![Logo](https://raw.githubusercontent.com/gateship-one/odyssey/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
+![Logo](https://github.com/OcreXx/OdysseyTFG/blob/Sprint-04/app/src/debug/ic_launcher-playstore.png)
 
 # Odyssey 
 
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/org.gateshipone.odyssey)
+[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get the original app on F-Droid" height="60">](https://f-droid.org/app/org.gateshipone.odyssey)
 
 This whole project is licensed under the **GPLv3 or later** license (see LICENSE)
 
@@ -10,26 +10,23 @@ This whole project is licensed under the **GPLv3 or later** license (see LICENSE
 
 **Please check out the [Frequently Asked Questions](https://github.com/gateship-one/odyssey/wiki/FAQ)**
 
-This is the source code repository of the Android music player Odyssey. 
+## Overview ##
+Odyssey Music Player is built with a clear objective in mind: to offer a seamless music playback experience, especially suited for use while driving. The primary focus of this project is to provide a music player that's not only fast and efficient, but also adheres closely to the principles of Material Design Guidelines.
 
-The main focus of this project is to create an music player that is optimized for speed (even with large music libraries).
-On the other hand the players is designed with the Material Design Guidelines in mind and we try to follow them as close
-as possible.
+The orignal creator of the application is [Odyssey](https://github.com/gateship-one/odyssey). This version of the app aims to simplify and adapt the application for the car without sacrificing the original aesthetics and optimization.
+## Key Features ##
+Efficient Music Library: Odyssey is tailored to handle even the most extensive music libraries without sacrificing speed or performance. Navigate through your artists, albums, tracks and playlists effortssly.
 
-It's main features are a fast music library (artist, album, file browser).
+Sleek and Intuitive: Embracing the principles of Material Design, Odyssey brings a modern and intuitive user interface that makes accessing your music collection a breeze.
 
-A basic playlist management functionality is also part of this player.
+Easy to use modes: the application offers a "Party mode" that allows the driver to create random playlists on the go. An we also provide with "Save the album" mode, which allows the user to play a random album.
 
-To be able to play audio books and podcast this player has a bookmark feature, that allows you to save your playlist and the playback position, to
-resume your audio book/podcast later. 
-
-For more comfort you are able to use the launcher widget to have quick control over your music playback.
-
+Quick Control with Launcher Widget: Enhance your music playback convenience using the included launcher widget. Enjoy quick and hassle-free control over your music right from your home screen.
 ## Requirements: ##
  * Android 5.0
  * Music on your device ;)
  
-## Features: ##
+## Other Features: ##
  * Artist, album, file based browsing of your library
  * Basic playlist management
  * Bookmarks

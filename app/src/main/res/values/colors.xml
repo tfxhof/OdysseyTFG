@@ -21,6 +21,9 @@
   -->
 
 <resources>
+
+    <color name="ic_launcher_background">#E7BFBF</color>
+
     <color name="colorPrimary_indigo">#3F51B5</color>
     <color name="colorPrimaryDark_indigo">#303F9F</color>
     <color name="colorAccent_indigo">#FF1744</color>

@@ -283,7 +283,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.endTransaction();
 
         // close the connection
-        odysseyDB.close();
+
     }
 
     /**
@@ -328,7 +328,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return playList;
     }
@@ -392,7 +392,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         stateCursor.close();
 
-        odysseyDB.close();
+
 
         return playList;
     }
@@ -426,7 +426,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return state;
     }
@@ -460,7 +460,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
 
         cursor.close();
 
-        odysseyDB.close();
+
 
         return state;
     }
@@ -503,7 +503,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
             bookmarkCursor.close();
         }
 
-        odysseyDB.close();
+
 
         return bookmarks;
     }
@@ -534,7 +534,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
+
     }
 
     /**
@@ -577,6 +577,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         values.put(PlaylistsTable.COLUMN_TITLE, playlistName);
         values.put(PlaylistsTable.COLUMN_TRACKS, tracks.size());
         if (playlistId != -1) {
+
             values.put(PlaylistsTable.COLUMN_ID, playlistId);
         }
 
@@ -617,7 +618,6 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
     }
 
     /**
@@ -650,7 +650,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
+
 
         return result > 0;
     }
@@ -694,7 +694,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
             cursor.close();
         }
 
-        odysseyDB.close();
+
 
         return playlists;
     }
@@ -708,13 +708,8 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
     public List<TrackModel> getTracksForPlaylist(final long playlistId) {
         final SQLiteDatabase odysseyDB = getReadableDatabase();
 
-        final List<TrackModel> tracks = getTracksForPlaylist(playlistId, odysseyDB);
-
-        odysseyDB.close();
-
-        return tracks;
+        return getTracksForPlaylist(playlistId, odysseyDB);
     }
-
     /**
      * Method to remove a track from an already existing playlist
      *
@@ -767,9 +762,8 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
         odysseyDB.setTransactionSuccessful();
         odysseyDB.endTransaction();
 
-        odysseyDB.close();
 
-        return result > 0;
+        return result > 0; //strict
     }
 
     /**
