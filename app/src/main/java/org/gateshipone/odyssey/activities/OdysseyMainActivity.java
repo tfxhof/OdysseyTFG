@@ -146,9 +146,10 @@ public class OdysseyMainActivity extends GenericActivity
     private Uri mSentUri;
 
     private boolean mShowNPV = false;
-    private OdysseyDatabaseManager mDatabaseManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        OdysseyDatabaseManager mDatabaseManager;
         boolean switchToSettings = false;
         //personal
         mTrackRandomGenerator = new TrackRandomGenerator();
@@ -286,10 +287,9 @@ public class OdysseyMainActivity extends GenericActivity
 
         if (externalFilesDir != null) {
             File imageFile = new File(externalFilesDir, "save_the_album.png");
-            try {
-                Resources resources = getResources();
-                InputStream inputStream = resources.openRawResource(resources.getIdentifier("icon_512", "drawable", getPackageName()));
-                FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+            Resources resources = getResources();
+            try (InputStream inputStream = resources.openRawResource(resources.getIdentifier("icon_512", "drawable", getPackageName()));
+                 FileOutputStream fileOutputStream = new FileOutputStream(imageFile);){
 
                 byte[] buffer = new byte[1024];
                 int bytesRead;
@@ -297,8 +297,6 @@ public class OdysseyMainActivity extends GenericActivity
                     fileOutputStream.write(buffer, 0, bytesRead);
                 }
 
-                fileOutputStream.close();
-                inputStream.close();
             } catch (IOException e) {
                 Log.e("MiApp", "Error, cannot load save the alum image", e);
             }
@@ -306,7 +304,7 @@ public class OdysseyMainActivity extends GenericActivity
 
         //personal
         List<TrackModel> tracksAll = MusicLibraryHelper.getAllTracks("",getApplicationContext());
-        if (tracksAll.size() >0) {
+        if (!tracksAll.isEmpty()) {
             List<TrackModel> tracksParty = new ArrayList<>();
             mDatabaseManager = OdysseyDatabaseManager.getInstance(getApplicationContext());
             mTrackRandomGenerator.fillFromList(tracksAll);
@@ -697,15 +695,16 @@ public class OdysseyMainActivity extends GenericActivity
             transaction.addToBackStack("AlbumTracksFragment");
             // Commit the transaction
             transaction.commit();
+            //Start playing the album
+            try {
+                getPlaybackService().clearPlaylist();
+                getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
+                getPlaybackService().togglePause();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
-        //Start playing the album
-        try {
-            getPlaybackService().clearPlaylist();
-            getPlaybackService().enqueueAlbum(albumFinal.getAlbumId(),"0");
-            getPlaybackService().togglePause();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /**

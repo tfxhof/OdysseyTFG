@@ -708,11 +708,7 @@ public class OdysseyDatabaseManager extends SQLiteOpenHelper {
     public List<TrackModel> getTracksForPlaylist(final long playlistId) {
         final SQLiteDatabase odysseyDB = getReadableDatabase();
 
-        final List<TrackModel> tracks = getTracksForPlaylist(playlistId, odysseyDB);
-
-
-
-        return tracks;
+        return getTracksForPlaylist(playlistId, odysseyDB);
     }
     /**
      * Method to remove a track from an already existing playlist

@@ -53,7 +53,6 @@ import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.models.TrackRandomGenerator;
-import org.gateshipone.odyssey.playbackservice.GaplessPlayer;
 import org.gateshipone.odyssey.playbackservice.IOdysseyPlaybackService;
 import org.gateshipone.odyssey.playbackservice.NowPlayingInformation;
 import org.gateshipone.odyssey.playbackservice.PlaybackService;
@@ -90,7 +89,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     private PreferenceHelper.LIBRARY_TRACK_CLICK_ACTION mClickAction;
     private TrackRandomGenerator mTrackRandomGenerator;
-    private View view;
+
 
     public static PlaylistTracksFragment newInstance(@NonNull final PlaylistModel playlistModel) {
         final Bundle args = new Bundle();
@@ -103,8 +102,8 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.list_refresh, container, false);
-        return view;
+
+        return inflater.inflate(R.layout.list_refresh, container, false);
     }
 
     @Override
@@ -200,7 +199,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                 //We stop it to ensure proper state
                 ((GenericActivity) requireActivity()).getPlaybackService().togglePause();
             } catch (RemoteException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             int num = 0;
@@ -247,12 +245,16 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                 playPlaylist(position);
                 break;
         }
+        activateRepeat(isParty);
+    }
 
+    private void activateRepeat(boolean isParty) {
         if(isParty) {
             try {
-                sleep(100);
+                sleep(150);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.e("Sleep","Repeat sleep faield");
+                Thread.currentThread().interrupt();
             }
             IOdysseyPlaybackService pbs = null;
 
@@ -274,13 +276,13 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                         }
                         NowPlayingView nowPlayingView = requireActivity().findViewById(R.id.now_playing_layout);
                         nowPlayingView.updateStatus(pbs.getNowPlayingInformation());
+                        refreshContent();
                     }
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     /** to do personal
