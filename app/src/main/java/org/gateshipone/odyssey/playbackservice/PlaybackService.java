@@ -1076,7 +1076,6 @@ public class PlaybackService extends Service implements AudioManager.OnAudioFocu
         }
 
         enqueueTrack(track);
-
         jumpToIndex(mCurrentList.size() - 1);
     }
 

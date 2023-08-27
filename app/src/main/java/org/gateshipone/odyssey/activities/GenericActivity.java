@@ -72,7 +72,6 @@ public abstract class GenericActivity extends AppCompatActivity {
         mProgressDialog.setIndeterminate(true);
 
         mServiceConnection = new PlaybackServiceConnection(getApplicationContext());
-
         // Create service connection
         mServiceConnection.setNotifier(new ServiceConnectionListener());
 

@@ -53,6 +53,7 @@ import org.gateshipone.odyssey.adapter.TracksAdapter;
 import org.gateshipone.odyssey.models.PlaylistModel;
 import org.gateshipone.odyssey.models.TrackModel;
 import org.gateshipone.odyssey.models.TrackRandomGenerator;
+import org.gateshipone.odyssey.playbackservice.GaplessPlayer;
 import org.gateshipone.odyssey.playbackservice.IOdysseyPlaybackService;
 import org.gateshipone.odyssey.playbackservice.NowPlayingInformation;
 import org.gateshipone.odyssey.playbackservice.PlaybackService;
@@ -193,7 +194,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
         boolean isParty = mPlaylistModel.getPlaylistName().equals("Party Mode");
         if(isParty) {
             try {
@@ -217,14 +217,12 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
                 mTrackRandomGenerator.setEnabled(50);
                 mTrackRandomGenerator.fillFromList(allDifferentTracks);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt("Party Mode", 1);
-                editor.apply();
+
                 while(num <position) {
 
                     //When we delete the track number updates itself
                     removeTrackFromPlaylist(0);
-                    TrackModel el =currentTracks.remove(0);
+                    currentTracks.remove(0);
                     num++;
                     //We randomize for artist and album
                     currentTracks.add(allDifferentTracks.get(mTrackRandomGenerator.getRandomTrackNumber()));
@@ -234,10 +232,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
 
             position= 0;
 
-        } else {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt("Party Mode", 0);
-            editor.apply();
         }
         switch (mClickAction) {
             case ACTION_ADD_SONG:
@@ -253,9 +247,10 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                 playPlaylist(position);
                 break;
         }
+
         if(isParty) {
             try {
-                sleep(150);
+                sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
