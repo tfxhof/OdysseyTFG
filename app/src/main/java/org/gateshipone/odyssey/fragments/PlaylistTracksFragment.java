@@ -261,11 +261,6 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
             try {
 
                 pbs = ((GenericActivity) requireActivity()).getPlaybackService();
-            } catch (RemoteException e) {
-
-                e.printStackTrace();
-            }
-            try {
                 if (pbs != null) {
                     NowPlayingInformation np;
                     np = pbs.getNowPlayingInformation();
@@ -280,6 +275,7 @@ public class PlaylistTracksFragment extends OdysseyFragment<TrackModel> implemen
                     }
                 }
             } catch (RemoteException e) {
+
                 e.printStackTrace();
             }
         }
