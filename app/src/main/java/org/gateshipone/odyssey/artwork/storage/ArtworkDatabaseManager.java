@@ -28,6 +28,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.gateshipone.odyssey.BuildConfig;
+import org.gateshipone.odyssey.R;
 import org.gateshipone.odyssey.models.AlbumModel;
 import org.gateshipone.odyssey.models.ArtistModel;
 import org.gateshipone.odyssey.utils.FileUtils;
@@ -114,7 +116,9 @@ public class ArtworkDatabaseManager extends SQLiteOpenHelper {
 
         String selection;
         String[] selectionArguments;
-
+        if(albumName.equals("Save the album")){
+            return "/sdcard/Android/data/org.gateshipone.odysseyAuto/files/save_the_album.png" ;
+        }
         if (albumId != -1) {
             selection = AlbumArtTable.COLUMN_ALBUM_ID + "=?";
             selectionArguments = new String[]{String.valueOf(albumId)};

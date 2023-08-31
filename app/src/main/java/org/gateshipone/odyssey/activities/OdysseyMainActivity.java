@@ -298,7 +298,7 @@ public class OdysseyMainActivity extends GenericActivity
                 }
 
             } catch (IOException e) {
-                Log.e("MiApp", "Error, cannot load save the alum image", e);
+                Log.e("MiApp", "Error, cannot load save the album image", e);
             }
         }
 
