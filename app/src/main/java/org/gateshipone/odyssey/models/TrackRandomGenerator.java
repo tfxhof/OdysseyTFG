@@ -136,28 +136,28 @@ public class TrackRandomGenerator {
 
         mOriginalListAlbum = albums;
 
-        LinkedHashMap<String, List<Integer>> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<String, List<Integer>> artistAlbumsMap = new LinkedHashMap<>();
 
         if (albums == null || albums.isEmpty()) {
             // Abort for empty data structures
             return;
         }
 
-        // Iterate over the list and add all tracks to their artist lists
-        int trackNo = 0;
+        // Iterate over the list and add all albums to their artist lists
+        int albumNo = 0;
         for (AlbumModel album : albums) {
             String artistName = album.getArtistName();
-            List<Integer> list = hashMap.computeIfAbsent(artistName, k-> new ArrayList<>());
+            //If the artists doesn't exist in the map we create it, else we add the new value
+            List<Integer> list = artistAlbumsMap.computeIfAbsent(artistName, k-> new ArrayList<>());
 
-            // Add pair of position in original playlist and track itself to artists bucket list
-            list.add(trackNo);
+            // Add pair of position in original list and track itself to artists bucket list
+            list.add(albumNo);
 
-            // Increase the track number (index) of the original playlist
-            trackNo++;
+            // Increase the album number (index) of the original list
+            albumNo++;
         }
-
-
-        mDataAlbum.addAll(hashMap.values());
+        //Add values
+        mDataAlbum.addAll(artistAlbumsMap.values());
         Collections.shuffle(mDataAlbum);
     }
 
