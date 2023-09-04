@@ -266,7 +266,7 @@ public class TrackRandomGenerator {
         // Remove track to prevent double plays
         //first we save it to remove it from the artistsTracks cause there it has another order
         artistsTracks.remove(albumTracks.get(randomTrackNo));
-        albumTracks.remove(randomTrackNo);
+        //albumTracks.remove(randomTrackNo);
 
         // Check if tracks from this artist are left, otherwise remove the artist
         if (artistsTracks.isEmpty()) {
@@ -489,7 +489,7 @@ public class TrackRandomGenerator {
 
 
             // Do a quick check
-            //testDistribution(20,20);
+            //testDistribution(50,500);
         }
 
         private int getInternalRandomNumber() {
