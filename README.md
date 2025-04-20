@@ -2,6 +2,16 @@
 
 # Odyssey 
 
+---
+
+## Metadatos TfxHoF
+
+- Autor: [Marcos Fernández Alonso](https://www.linkedin.com/in/marcos-fernandez-alonso-512921270/)
+- Título: [Desarrollo de un reproductor de música Android para vehículos](https://repositorio.unican.es/xmlui/handle/10902/30796)
+- Fecha: Septiembre 2023
+
+---
+
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get the original app on F-Droid" height="60">](https://f-droid.org/app/org.gateshipone.odyssey)
 
 This whole project is licensed under the **GPLv3 or later** license (see LICENSE)
